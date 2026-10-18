@@ -22,3 +22,9 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .preloader-caption { margin-top: 7px; color: #77766F; font-size: 9px; font-weight: 600; letter-spacing: .28em; }
 @keyframes preloader-pulse { from { transform: scaleY(.55); opacity: .55; } to { transform: scaleY(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .preloader-mark span { animation: none; } #app-preloader { transition-duration: .01ms; } }
+
+
+/* Restrained monochrome treatment for Yandex map tiles; keep clinic marker and controls crisp. */
+.clinic-map [class*="ground-pane"] { filter: grayscale(30%) contrast(110%); }
+.clinic-map [class*="copyrights-pane"] { opacity: .58; }
+.clinic-map [class*="controls-pane"] { filter: saturate(.55); }
