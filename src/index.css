@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root { font-family: 'DM Sans', sans-serif; color: #1C1A17; background: #FAFAF7; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; scroll-padding-top: 100px; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+::selection { background: #dce3d7; color: #1C1A17; }
+@layer utilities { .text-balance { text-wrap: balance; } .section-wrap { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12; } }
+.image-grain::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 55%, rgba(28,26,23,.32)); }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #5B6B54; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
