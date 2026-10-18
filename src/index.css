@@ -1,10 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root { font-family: 'DM Sans', sans-serif; color: #1C1A17; background: #FAFAF7; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; scroll-padding-top: 100px; }
+:root { font-family: 'DM Sans', sans-serif; color: #1C1A17; background: #FAFAF7; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; scroll-padding-top: 104px; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
-main section[id], #privacy-note { scroll-margin-top: 104px; scroll-snap-margin-top: 104px; }
+main section[id], #privacy-note { scroll-margin-top: 104px; }
 button, input, select { font: inherit; }
 ::selection { background: #dce3d7; color: #1C1A17; }
 @layer utilities { .text-balance { text-wrap: balance; } .section-wrap { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12; } }
