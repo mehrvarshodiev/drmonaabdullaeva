@@ -195,9 +195,48 @@ const YandexMap = memo(function YandexMap() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [form, setForm] = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
+  const [headerVisible, setHeaderVisible] = useState(true)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [form, setForm = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
   const [submitted, setSubmitted] = useState(false)
   const reduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    let previousY = window.scrollY
+    let ticking = false
+
+    const updateScrollState = () => {
+      const currentY = window.scrollY
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+      setScrollProgress(scrollableHeight > 0 ? Math.min(1, Math.max(0, currentY / scrollableHeight)) : 0)
+
+      if (currentY <= 24) {
+        setHeaderVisible(true)
+      } else if (menuOpen || currentY < previousY - 2) {
+        setHeaderVisible(true)
+      } else if (currentY > previousY + 2) {
+        setHeaderVisible(false)
+      }
+      previousY = currentY
+      ticking = false
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollState)
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    updateScrollState()
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [menuOpen])
 
   useEffect(() => {
     const preloader = document.getElementById('app-preloader')
@@ -229,21 +268,33 @@ function App() {
   }
 
   const closeMenu = () => setMenuOpen(false)
+  const scrollToTop = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+    closeMenu()
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
 
   return (
     <div className="min-h-screen overflow-hidden bg-alabaster text-espresso">
+      <div className="scroll-progress-track" aria-hidden="true">
+        <div className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress})` }} />
+      </div>
       <div className="border-b border-stone-200/70 bg-ivory px-4 py-2 text-center text-[9px] font-medium uppercase tracking-[.17em] text-stone-500 sm:text-[10px]">
         Эстетическая стоматология · Москва · Забота, которую видно в деталях
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-stone-200/70 bg-alabaster/85 backdrop-blur-xl">
+      <header
+        className={`sticky top-0 z-50 border-b border-stone-200/70 bg-alabaster/90 backdrop-blur-xl transition-transform duration-300 ease-out motion-reduce:transition-none ${headerVisible || menuOpen ? 'translate-y-0' : '-translate-y-[110%]'}`}
+        style={{ willChange: 'transform' }}
+      >
         <div className="section-wrap flex h-[72px] items-center justify-between gap-4">
-          <a href="#home" className="group flex shrink-0 flex-col leading-none" aria-label="Dr. Mona Abdullaeva — на главную">
+          <a href="#home" onClick={scrollToTop} className="group flex shrink-0 flex-col leading-none" aria-label="Dr. Mona Abdullaeva — на главную">
             <span className="font-serif text-[17px] tracking-[.09em] sm:text-[19px]">DR. MONA</span>
             <span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500 sm:text-[9px]">ABDULLAEVA</span>
           </a>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Основная навигация">
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#home" onClick={scrollToTop}>Главная</a>
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#services">Услуги</a>
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#cases">Кейсы</a>
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#approach">Подход</a>
@@ -263,8 +314,14 @@ function App() {
           {menuOpen && (
             <motion.nav initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-stone-200 bg-alabaster lg:hidden">
               <div className="section-wrap flex flex-col py-3">
-                {[['Услуги', '#services'], ['Кейсы до/после', '#cases'], ['Подход', '#approach'], ['Контакты', '#contacts']].map(([label, href]) => (
-                  <a key={href} href={href} onClick={closeMenu} className="border-b border-stone-100 py-4 text-sm">{label}</a>
+                {[
+                  ['Главная', '#home'],
+                  ['Услуги', '#services'],
+                  ['Кейсы до/после', '#cases'],
+                  ['Подход', '#approach'],
+                  ['Контакты', '#contacts'],
+                ].map(([label, href]) => (
+                  <a key={href} href={href} onClick={href === '#home' ? scrollToTop : closeMenu} className="border-b border-stone-100 py-4 text-sm">{label}</a>
                 ))}
                 <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={closeMenu} className="my-4 flex items-center justify-center gap-2 rounded-full bg-sage py-3.5 text-sm font-semibold text-white"><MessageCircle size={16} /> Записаться в WhatsApp</a>
               </div>
@@ -481,8 +538,8 @@ function App() {
       <footer className="bg-alabaster">
         <div className="section-wrap">
           <div className="flex flex-col gap-7 border-b border-stone-200 py-8 sm:flex-row sm:items-center sm:justify-between">
-            <a href="#home" className="flex flex-col leading-none"><span className="font-serif text-lg tracking-[.09em]">DR. MONA</span><span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500">ABDULLAEVA</span></a>
-            <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#services" className="hover:text-sage">Услуги</a><a href="#cases" className="hover:text-sage">Кейсы</a><a href="#approach" className="hover:text-sage">Подход</a><a href="#contacts" className="hover:text-sage">Контакты</a></nav>
+            <a href="#home" onClick={scrollToTop} className="flex flex-col leading-none"><span className="font-serif text-lg tracking-[.09em]">DR. MONA</span><span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500">ABDULLAEVA</span></a>
+            <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#home" onClick={scrollToTop} className="hover:text-sage">Главная</a><a href="#services" className="hover:text-sage">Услуги</a><a href="#cases" className="hover:text-sage">Кейсы</a><a href="#approach" className="hover:text-sage">Подход</a><a href="#contacts" className="hover:text-sage">Контакты</a></nav>
             <div className="flex gap-2">
               <a href="https://www.instagram.com/drmonaabdullaeva/" target="_blank" rel="noreferrer" aria-label="Instagram доктора Моны" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><Instagram size={16} /></a>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Запись в WhatsApp" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><MessageCircle size={16} /></a>
