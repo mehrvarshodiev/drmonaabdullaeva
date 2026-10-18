@@ -277,18 +277,50 @@ function App() {
   const handleSectionNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
     const href = event.currentTarget.getAttribute('href')
     if (!href || !href.startsWith('#') || href === '#') return
-    const section = document.getElementById(decodeURIComponent(href.slice(1)))
+    let section: HTMLElement | null = null
+    try {
+      section = document.getElementById(decodeURIComponent(href.slice(1)))
+    } catch {
+      return
+    }
     if (!section) return
     event.preventDefault()
     closeMenu()
-    const top = section.getBoundingClientRect().top + window.scrollY - 104
-    window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? 'auto' : 'smooth' })
+    setHeaderVisible(true)
     if (window.location.hash !== href) window.history.replaceState(null, '', href)
+    // Wait for the mobile menu to collapse before measuring/scrolling to the target.
+    window.requestAnimationFrame(() => {
+      section?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    })
   }
 
   return (
     <div
-      className="min-h-screen overflow-clip bg-alabaster text-espresso"
+      className="min-h-screen bg-alabaster text-espresso"
+      onClick={(event) => {
+        // A single fallback for every in-page anchor, including links added outside the main nav.
+        if (event.defaultPrevented) return
+        const target = event.target
+        if (!(target instanceof Element)) return
+        const anchor = target.closest('a[href^="#"]')
+        if (!(anchor instanceof HTMLAnchorElement)) return
+        const href = anchor.getAttribute('href')
+        if (!href || href === '#') return
+        let section: HTMLElement | null = null
+        try {
+          section = document.getElementById(decodeURIComponent(href.slice(1)))
+        } catch {
+          return
+        }
+        if (!section) return
+        event.preventDefault()
+        setMenuOpen(false)
+        setHeaderVisible(true)
+        if (window.location.hash !== href) window.history.replaceState(null, '', href)
+        window.requestAnimationFrame(() => {
+          section?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+        })
+      }}
     >
       <div
         className="scroll-progress-track"
