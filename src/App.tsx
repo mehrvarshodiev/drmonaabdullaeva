@@ -182,7 +182,6 @@ const YandexMap = memo(function YandexMap() {
           hideIconOnBalloonOpen: false,
         })
         map.geoObjects.add(pin)
-        pin.balloon.open()
         map.events.add('click', () => map.behaviors.enable('scrollZoom'))
         setMapInstance(map)
         setMapReady(true)
@@ -221,7 +220,7 @@ const YandexMap = memo(function YandexMap() {
         frameBorder="0"
         loading="eager"
         referrerPolicy="strict-origin-when-cross-origin"
-        className="block h-[300px] w-full sm:h-[420px]"
+        className="clinic-map-fallback block h-[300px] w-full sm:h-[420px]"
       />
     )
   }
