@@ -9,7 +9,8 @@ import {
 } from 'lucide-react'
 
 const whatsappMessage = 'Здравствуйте, хочу записаться на бесплатную диагностику к доктору Моне Абдуллаевой.'
-const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`
+const whatsappPhone = '79966551719'
+const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`
 
 type DentalCase = { number: string; title: string; subtitle: string; time: string; complexity: string; before: string; after: string; tag: string }
 type DentalService = { number: string; title: string; description: string; note: string; icon: LucideIcon }
@@ -148,7 +149,7 @@ function App() {
       `Услуга: ${form.service}`,
     ].join('\n')
     setSubmitted(true)
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
+    window.open(`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
   }
 
   const closeMenu = () => setMenuOpen(false)
