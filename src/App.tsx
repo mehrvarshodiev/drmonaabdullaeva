@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
@@ -132,21 +132,116 @@ function BeforeAfterCard({ item }: { item: DentalCase }) {
   )
 }
 
-const YANDEX_MAP_URL = 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map'
+const CLINIC_COORDINATES: [number, number] = [55.741186, 37.502687]
+const CLINIC_ADDRESS = 'Москва, ул. Барклая, д. 8, ТЦ «Старая Горбушка», 4-й этаж'
+const CLINIC_MAP_URL = 'https://yandex.ru/maps/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm'
+const CLINIC_ROUTE_URL = 'https://yandex.ru/maps/?rtext=~55.741186%2C37.502687&rtt=auto'
+const YANDEX_MAP_FALLBACK_URL = 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map'
 
 const YandexMap = memo(function YandexMap() {
+  const mapElement = useRef<HTMLDivElement>(null)
+  const [mapInstance, setMapInstance] = useState<any>(null)
+  const [useFallback, setUseFallback] = useState(false)
+  const [mapReady, setMapReady] = useState(false)
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY as string | undefined
+    if (!apiKey || !mapElement.current) {
+      setUseFallback(true)
+      return
+    }
+
+    let disposed = false
+    let map: any
+    const scriptId = 'yandex-maps-js-api'
+    const existingScript = document.getElementById(scriptId) as HTMLScriptElement | null
+
+    const initialize = () => {
+      const ymaps = (window as any).ymaps
+      if (disposed || !ymaps || !mapElement.current) return
+      ymaps.ready(() => {
+        if (disposed || !mapElement.current) return
+        map = new ymaps.Map(mapElement.current, {
+          center: CLINIC_COORDINATES,
+          zoom: 17,
+          controls: [],
+          behaviors: ['drag', 'dblClickZoom'],
+        }, {
+          suppressMapOpenBlock: true,
+        })
+
+        const pinSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="#5B6B54" stroke="#fff" stroke-width="3"/><circle cx="22" cy="22" r="5" fill="#fff"/></svg>'
+        const pin = new ymaps.Placemark(CLINIC_COORDINATES, {
+          balloonContentHeader: '<span style="font-family:Georgia,serif;font-size:17px;color:#1C1A17">Dr. Mona Abdullaeva</span>',
+          balloonContentBody: '<div style="font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:#62645D;max-width:230px">Клиника эстетической стоматологии Dr. Mona Abdullaeva<br/><span style="color:#5B6B54">ТЦ «Старая Горбушка» · 4-й этаж</span></div>',
+          hintContent: 'Клиника эстетической стоматологии Dr. Mona Abdullaeva',
+        }, {
+          iconLayout: 'default#image',
+          iconImageHref: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvg)}`,
+          iconImageSize: [44, 44],
+          iconImageOffset: [-22, -22],
+          hideIconOnBalloonOpen: false,
+        })
+        map.geoObjects.add(pin)
+        pin.balloon.open()
+        map.events.add('click', () => map.behaviors.enable('scrollZoom'))
+        setMapInstance(map)
+        setMapReady(true)
+      })
+    }
+
+    if ((window as any).ymaps) {
+      initialize()
+    } else if (existingScript) {
+      existingScript.addEventListener('load', initialize, { once: true })
+      existingScript.addEventListener('error', () => setUseFallback(true), { once: true })
+    } else {
+      const script = document.createElement('script')
+      script.id = scriptId
+      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${encodeURIComponent(apiKey)}&lang=ru_RU`
+      script.async = true
+      script.onload = initialize
+      script.onerror = () => setUseFallback(true)
+      document.head.appendChild(script)
+    }
+
+    return () => {
+      disposed = true
+      if (map) map.destroy()
+      setMapInstance(null)
+    }
+  }, [])
+
+  if (useFallback) {
+    return (
+      <iframe
+        title="Карта проезда — улица Барклая, 8, Москва"
+        src={YANDEX_MAP_FALLBACK_URL}
+        width="100%"
+        height="380"
+        frameBorder="0"
+        loading="eager"
+        referrerPolicy="strict-origin-when-cross-origin"
+        className="block h-[300px] w-full sm:h-[420px]"
+      />
+    )
+  }
+
   return (
-    <iframe
-      title="Карта проезда — улица Барклая, 8, Москва"
-      src={YANDEX_MAP_URL}
-      width="100%"
-      height="380"
-      frameBorder="0"
-      allowFullScreen
-      loading="eager"
-      referrerPolicy="strict-origin-when-cross-origin"
-      className="block h-[300px] w-full sm:h-[380px]"
-    />
+    <div className="relative h-[300px] w-full overflow-hidden sm:h-[420px]">
+      <div ref={mapElement} className={`clinic-map h-full w-full transition-opacity duration-500 ${mapReady ? 'opacity-100' : 'opacity-0'}`} aria-label="Интерактивная Яндекс Карта" />
+      {!mapReady && <div className="absolute inset-0 flex items-center justify-center bg-[#ECEFE8] text-xs tracking-wide text-stone-500">Загружаем карту…</div>}
+      {mapInstance && (
+        <div className="absolute right-4 top-4 z-10 flex flex-col overflow-hidden rounded-xl border border-white/80 bg-white/95 shadow-lg backdrop-blur">
+          <button type="button" aria-label="Приблизить карту" onClick={() => mapInstance.setZoom(Math.min(mapInstance.getZoom() + 1, 20), { duration: 180 })} className="flex h-10 w-10 items-center justify-center text-xl text-espresso transition hover:bg-[#E9EEE5]">+</button>
+          <span className="mx-2 h-px bg-stone-200" />
+          <button type="button" aria-label="Отдалить карту" onClick={() => mapInstance.setZoom(Math.max(mapInstance.getZoom() - 1, 3), { duration: 180 })} className="flex h-10 w-10 items-center justify-center text-xl text-espresso transition hover:bg-[#E9EEE5]">−</button>
+        </div>
+      )}
+      <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/95 px-4 py-3 text-xs font-semibold text-espresso shadow-lg backdrop-blur transition hover:-translate-y-0.5">
+        <MapPin size={15} className="text-sage" /> Открыть карту <MoveUpRight size={13} />
+      </a>
+    </div>
   )
 })
 
@@ -395,24 +490,40 @@ function App() {
               </form>
             </motion.div>
           </div>
-          <motion.div {...reveal} className="section-wrap mt-12 !px-0 sm:mt-16">
-            <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-              <div><Eyebrow>Как нас найти</Eyebrow><h3 className="font-serif text-3xl tracking-[-.03em] sm:text-4xl">Будем рады <span className="italic text-sage">вас видеть.</span></h3></div>
-              <a href="https://yandex.ru/maps/213/moscow/house/ulitsa_barklaya_8/Z04YcwdiT00AQFtvfXt1cH1rYg%3D%3D/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 self-start rounded-full border border-stone-200 bg-white px-4 py-3 text-xs font-semibold text-espresso transition hover:border-sage/40 sm:self-auto">Открыть в Яндекс Картах <ArrowRight size={14} /></a>
-            </div>
-            <div className="overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-[0_15px_50px_rgba(28,26,23,.05)]">
-              <div className="relative overflow-hidden bg-[#E9EEE5]">
-                <YandexMap />
-                <a href="https://yandex.ru/maps/213/moscow/house/ulitsa_barklaya_8/Z04YcwdiT00AQFtvfXt1cH1rYg%3D%3D/" target="_blank" rel="noreferrer" className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/95 px-4 py-3 text-xs font-semibold text-espresso shadow-lg backdrop-blur transition hover:-translate-y-0.5">
-                  <MapPin size={15} className="text-sage" /> Открыть карту <MoveUpRight size={13} />
-                </a>
-              </div>
-              <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={18} /></span>
-                  <div><p className="text-sm font-semibold text-espresso">ТЦ «Старая Горбушка» · 4-й этаж</p><p className="mt-1 text-xs leading-5 text-stone-500">Москва, ул. Барклая, д. 8</p></div>
+          <motion.div {...reveal} className="section-wrap mt-12 sm:mt-16">
+            <div className="overflow-hidden rounded-[2rem] border border-stone-200/80 bg-white shadow-[0_18px_60px_rgba(28,26,23,.06)]">
+              <div className="grid lg:grid-cols-[.82fr_1.18fr]">
+                <div className="flex flex-col justify-center p-6 sm:p-9 lg:p-11">
+                  <Eyebrow>Как нас найти</Eyebrow>
+                  <h3 className="max-w-md font-serif text-4xl leading-[1.04] tracking-[-.045em] sm:text-5xl">Будем рады <span className="italic text-sage">вас видеть.</span></h3>
+                  <p className="mt-4 max-w-sm text-sm leading-7 text-stone-500">Приходите на консультацию — поможем подобрать бережный и понятный план заботы о вашей улыбке.</p>
+
+                  <div className="mt-7 flex items-start gap-4 border-t border-stone-100 pt-6">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={19} /></span>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">Адрес клиники</p>
+                      <p className="mt-2 text-sm leading-6 text-espresso">Москва, ул. Барклая, д. 8<br />ТЦ «Старая Горбушка», 4-й этаж</p>
+                      <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500 underline decoration-stone-300 underline-offset-4 transition hover:text-sage">Открыть адрес в Яндекс Картах <MoveUpRight size={12} /></a>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex items-start gap-4 border-t border-stone-100 pt-5">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F0E8E0] text-[#8B725D]"><MessageCircle size={18} /></span>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">Связаться с нами</p>
+                      <a href="tel:+79966551719" className="mt-2 inline-flex text-base font-medium tracking-wide text-espresso transition hover:text-sage">+7 (996) 655-17-19</a>
+                      <p className="mt-1 text-xs text-stone-500">Запись и вопросы по WhatsApp</p>
+                    </div>
+                  </div>
+
+                  <a href={CLINIC_ROUTE_URL} target="_blank" rel="noreferrer" className="mt-7 inline-flex min-h-[52px] items-center justify-center gap-3 self-start rounded-full bg-sage px-6 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,107,84,.18)] transition hover:-translate-y-0.5 hover:bg-sage-dark">
+                    Проложить маршрут <ArrowRight size={15} />
+                  </a>
                 </div>
-                <a href="https://yandex.ru/maps/?rtext=~55.741186,37.502687&rtt=auto" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-sage px-5 py-3 text-xs font-semibold text-white transition hover:bg-sage-dark">Построить маршрут <ArrowRight size={14} /></a>
+                <div className="relative min-h-[300px] bg-[#ECEFE8] lg:min-h-[520px]">
+                  <YandexMap />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/25 to-transparent" />
+                </div>
               </div>
             </div>
           </motion.div>
