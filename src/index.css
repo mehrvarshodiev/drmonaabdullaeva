@@ -4,6 +4,7 @@
 :root { font-family: 'DM Sans', sans-serif; color: #1C1A17; background: #FAFAF7; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; scroll-padding-top: 100px; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
+main section[id] { scroll-margin-top: 100px; }
 button, input, select { font: inherit; }
 ::selection { background: #dce3d7; color: #1C1A17; }
 @layer utilities { .text-balance { text-wrap: balance; } .section-wrap { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12; } }
