@@ -276,7 +276,14 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-alabaster text-espresso">
-      <div className="scroll-progress-track" aria-hidden="true">
+      <div
+        className="scroll-progress-track"
+        role="progressbar"
+        aria-label="Прогресс прокрутки страницы"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(scrollProgress * 100)}
+      >
         <div className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress})` }} />
       </div>
       <div className="border-b border-stone-200/70 bg-ivory px-4 py-2 text-center text-[9px] font-medium uppercase tracking-[.17em] text-stone-500 sm:text-[10px]">
