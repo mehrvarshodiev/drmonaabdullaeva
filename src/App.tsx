@@ -197,7 +197,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [headerVisible, setHeaderVisible] = useState(true)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [form, setForm = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
+  const [form, setForm] = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
   const [submitted, setSubmitted] = useState(false)
   const reduceMotion = useReducedMotion()
 
