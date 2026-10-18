@@ -10,3 +10,15 @@ button, input, select { font: inherit; }
 .image-grain::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 55%, rgba(28,26,23,.32)); }
 input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #5B6B54; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* Lightweight first-paint preloader */
+#app-preloader { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; background: #FAFAF7; opacity: 1; visibility: visible; transition: opacity .35s ease, visibility .35s ease; }
+#app-preloader.app-preloader--hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.preloader-mark { display: flex; align-items: center; gap: 5px; height: 24px; margin-bottom: 22px; }
+.preloader-mark span { width: 4px; height: 13px; border-radius: 999px; background: #5B6B54; animation: preloader-pulse .8s ease-in-out infinite alternate; }
+.preloader-mark span:nth-child(2) { height: 22px; animation-delay: .15s; }
+.preloader-mark span:nth-child(3) { animation-delay: .3s; }
+.preloader-brand { color: #1C1A17; font-family: 'Playfair Display', Georgia, serif; font-size: 19px; letter-spacing: .16em; }
+.preloader-caption { margin-top: 7px; color: #77766F; font-size: 9px; font-weight: 600; letter-spacing: .28em; }
+@keyframes preloader-pulse { from { transform: scaleY(.55); opacity: .55; } to { transform: scaleY(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .preloader-mark span { animation: none; } #app-preloader { transition-duration: .01ms; } }
