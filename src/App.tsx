@@ -275,7 +275,24 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-alabaster text-espresso">
+    <div
+      className="min-h-screen overflow-clip bg-alabaster text-espresso"
+      onClick={(event) => {
+        if (event.defaultPrevented) return
+        const target = event.target
+        if (!(target instanceof Element)) return
+        const anchor = target.closest('a[href^="#"]')
+        if (!(anchor instanceof HTMLAnchorElement)) return
+        const href = anchor.getAttribute('href')
+        if (!href || href === '#') return
+        const section = document.getElementById(decodeURIComponent(href.slice(1)))
+        if (!section) return
+        event.preventDefault()
+        setMenuOpen(false)
+        section.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+        if (window.location.hash !== href) window.history.replaceState(null, '', href)
+      }}
+    >
       <div
         className="scroll-progress-track"
         role="progressbar"
