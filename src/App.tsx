@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
@@ -138,106 +138,57 @@ const CLINIC_ROUTE_URL = 'https://yandex.ru/maps/?rtext=~55.741186%2C37.502687&r
 const YANDEX_MAP_FALLBACK_URL = 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map'
 
 const YandexMap = memo(function YandexMap() {
-  const mapElement = useRef<HTMLDivElement>(null)
-  const [mapInstance, setMapInstance] = useState<any>(null)
-  const [useFallback, setUseFallback] = useState(false)
-  const [mapReady, setMapReady] = useState(false)
-
-  useEffect(() => {
-    const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY as string | undefined
-    if (!apiKey || !mapElement.current) {
-      setUseFallback(true)
-      return
-    }
-
-    let disposed = false
-    let map: any
-    const scriptId = 'yandex-maps-js-api'
-    const existingScript = document.getElementById(scriptId) as HTMLScriptElement | null
-
-    const initialize = () => {
-      const ymaps = (window as any).ymaps
-      if (disposed || !ymaps || !mapElement.current) return
-      ymaps.ready(() => {
-        if (disposed || !mapElement.current) return
-        map = new ymaps.Map(mapElement.current, {
-          center: CLINIC_COORDINATES,
-          zoom: 17,
-          controls: [],
-          behaviors: ['drag', 'dblClickZoom'],
-        }, {
-          suppressMapOpenBlock: true,
-        })
-
-        const pinSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="#5B6B54" stroke="#fff" stroke-width="3"/><circle cx="22" cy="22" r="5" fill="#fff"/></svg>'
-        const pin = new ymaps.Placemark(CLINIC_COORDINATES, {
-          balloonContentHeader: '<span style="font-family:Georgia,serif;font-size:17px;color:#1C1A17">Dr. Mona Abdullaeva</span>',
-          balloonContentBody: '<div style="font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:#62645D;max-width:230px">Клиника эстетической стоматологии Dr. Mona Abdullaeva<br/><span style="color:#5B6B54">ТЦ «Старая Горбушка» · 4-й этаж</span></div>',
-          hintContent: 'Клиника эстетической стоматологии Dr. Mona Abdullaeva',
-        }, {
-          iconLayout: 'default#image',
-          iconImageHref: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvg)}`,
-          iconImageSize: [44, 44],
-          iconImageOffset: [-22, -22],
-          hideIconOnBalloonOpen: false,
-        })
-        map.geoObjects.add(pin)
-        map.events.add('click', () => map.behaviors.enable('scrollZoom'))
-        setMapInstance(map)
-        setMapReady(true)
-      })
-    }
-
-    if ((window as any).ymaps) {
-      initialize()
-    } else if (existingScript) {
-      existingScript.addEventListener('load', initialize, { once: true })
-      existingScript.addEventListener('error', () => setUseFallback(true), { once: true })
-    } else {
-      const script = document.createElement('script')
-      script.id = scriptId
-      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${encodeURIComponent(apiKey)}&lang=ru_RU`
-      script.async = true
-      script.onload = initialize
-      script.onerror = () => setUseFallback(true)
-      document.head.appendChild(script)
-    }
-
-    return () => {
-      disposed = true
-      if (map) map.destroy()
-      setMapInstance(null)
-    }
-  }, [])
-
-  if (useFallback) {
-    return (
-      <iframe
-        title="Карта проезда — улица Барклая, 8, Москва"
-        src={YANDEX_MAP_FALLBACK_URL}
-        width="100%"
-        height="380"
-        frameBorder="0"
-        loading="eager"
-        referrerPolicy="strict-origin-when-cross-origin"
-        className="clinic-map-fallback block h-[300px] w-full sm:h-[420px]"
-      />
-    )
-  }
+  const [mapInteractive, setMapInteractive] = useState(false)
+  const [balloonOpen, setBalloonOpen] = useState(false)
 
   return (
-    <div className="relative h-[300px] w-full overflow-hidden sm:h-[420px]">
-      <div ref={mapElement} className={`clinic-map h-full w-full transition-opacity duration-500 ${mapReady ? 'opacity-100' : 'opacity-0'}`} aria-label="Интерактивная Яндекс Карта" />
-      {!mapReady && <div className="absolute inset-0 flex items-center justify-center bg-[#ECEFE8] text-xs tracking-wide text-stone-500">Загружаем карту…</div>}
-      {mapInstance && (
-        <div className="absolute right-4 top-4 z-10 flex flex-col overflow-hidden rounded-xl border border-white/80 bg-white/95 shadow-lg backdrop-blur">
-          <button type="button" aria-label="Приблизить карту" onClick={() => mapInstance.setZoom(Math.min(mapInstance.getZoom() + 1, 20), { duration: 180 })} className="flex h-10 w-10 items-center justify-center text-xl text-espresso transition hover:bg-[#E9EEE5]">+</button>
-          <span className="mx-2 h-px bg-stone-200" />
-          <button type="button" aria-label="Отдалить карту" onClick={() => mapInstance.setZoom(Math.max(mapInstance.getZoom() - 1, 3), { duration: 180 })} className="flex h-10 w-10 items-center justify-center text-xl text-espresso transition hover:bg-[#E9EEE5]">−</button>
+    <div className="relative h-[300px] w-full overflow-hidden bg-[#ECEFE8] sm:h-[520px]">
+      <iframe
+        title="Интерактивная Яндекс Карта — клиника Dr. Mona Abdullaeva, Москва, улица Барклая, 8"
+        src={YANDEX_MAP_FALLBACK_URL}
+        width="100%"
+        height="100%"
+        frameBorder="0"
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+        className={`clinic-map-fallback absolute inset-0 block h-full w-full ${mapInteractive ? 'pointer-events-auto' : 'pointer-events-none'}`}
+      />
+      {!mapInteractive && (
+        <button
+          type="button"
+          onClick={() => setMapInteractive(true)}
+          className="absolute inset-0 z-[5] flex items-end justify-center bg-transparent p-4 text-center"
+          aria-label="Активировать управление картой"
+        >
+          <span className="rounded-full border border-white/80 bg-white/95 px-4 py-3 text-xs font-medium text-espresso shadow-lg backdrop-blur">
+            Нажмите на карту, чтобы перемещать и масштабировать
+          </span>
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation()
+          setBalloonOpen((open) => !open)
+          setMapInteractive(true)
+        }}
+        className="absolute left-1/2 top-1/2 z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-white bg-sage shadow-[0_5px_20px_rgba(35,45,32,.3)] transition hover:scale-105"
+        aria-label="Показать информацию о клинике"
+        aria-expanded={balloonOpen}
+      >
+        <span className="h-3 w-3 rounded-full bg-white" />
+      </button>
+      {balloonOpen && (
+        <div className="absolute left-1/2 top-[calc(50%-4.25rem)] z-20 w-[min(290px,calc(100%-2rem))] -translate-x-1/2 rounded-2xl border border-stone-200/80 bg-white/95 p-4 shadow-[0_12px_40px_rgba(28,26,23,.15)] backdrop-blur">
+          <button type="button" onClick={() => setBalloonOpen(false)} aria-label="Закрыть информацию о клинике" className="absolute right-3 top-3 text-stone-400 hover:text-espresso"><X size={15} /></button>
+          <p className="pr-4 font-serif text-lg leading-tight text-espresso">Dr. Mona Abdullaeva</p>
+          <p className="mt-1 text-xs leading-5 text-stone-500">Клиника эстетической стоматологии Dr. Mona Abdullaeva</p>
+          <p className="mt-2 text-[11px] leading-4 text-sage">ТЦ «Старая Горбушка» · 4-й этаж</p>
+          <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-espresso underline decoration-stone-300 underline-offset-4">Открыть в Яндекс Картах <MoveUpRight size={12} /></a>
         </div>
       )}
-      <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/95 px-4 py-3 text-xs font-semibold text-espresso shadow-lg backdrop-blur transition hover:-translate-y-0.5">
-        <MapPin size={15} className="text-sage" /> Открыть карту <MoveUpRight size={13} />
+      <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="absolute bottom-4 right-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/95 px-4 py-3 text-xs font-semibold text-espresso shadow-lg backdrop-blur transition hover:-translate-y-0.5">
+        Открыть карту <MoveUpRight size={13} />
       </a>
     </div>
   )
