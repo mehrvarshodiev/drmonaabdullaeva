@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from 'react'
-import type { ChangeEvent, FormEvent, ReactNode } from 'react'
+import type { ChangeEvent, FormEvent, MouseEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
@@ -268,7 +268,7 @@ function App() {
   }
 
   const closeMenu = () => setMenuOpen(false)
-  const scrollToTop = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const scrollToTop = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     closeMenu()
     window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
