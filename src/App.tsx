@@ -5,7 +5,7 @@ import type { LucideIcon } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowDownRight, ArrowRight, Check, ChevronDown, Clock3, Instagram,
-  Menu, MessageCircle, MoveUpRight, ShieldCheck, Sparkles, X
+  MapPin, Menu, MessageCircle, MoveUpRight, ShieldCheck, Sparkles, X
 } from 'lucide-react'
 
 const whatsappMessage = 'Здравствуйте, хочу записаться на бесплатную диагностику к доктору Моне Абдуллаевой.'
@@ -325,7 +325,7 @@ function App() {
                   <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">Instagram</span><span className="mt-1 block text-xs text-stone-500">@drmonaabdullaeva</span></span><MoveUpRight size={16} className="text-stone-400" />
                 </a>
               </div>
-              <p className="mt-5 text-xs leading-5 text-stone-400">Точный адрес и доступные часы приёма уточняются при записи.</p>
+              <a href="https://yandex.ru/maps/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж" target="_blank" rel="noreferrer" className="mt-5 flex items-start gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={18} /></span><span className="min-w-0 flex-1"><span className="block text-xs font-semibold uppercase tracking-[.14em] text-sage">Адрес приёма</span><span className="mt-1 block text-sm leading-6 text-espresso">Москва, ул. Барклая, д. 8<br />ТЦ «Старая Горбушка», 4-й этаж</span><span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500">Открыть в Яндекс Картах <MoveUpRight size={13} /></span></span></a>
             </motion.div>
 
             <motion.div {...reveal} className="rounded-[1.75rem] border border-stone-200/80 bg-white p-5 shadow-[0_15px_50px_rgba(28,26,23,.04)] sm:p-8 lg:p-10">
@@ -362,6 +362,21 @@ function App() {
               </form>
             </motion.div>
           </div>
+          <motion.div {...reveal} className="section-wrap mt-12 !px-0 sm:mt-16">
+            <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div><Eyebrow>Как нас найти</Eyebrow><h3 className="font-serif text-3xl tracking-[-.03em] sm:text-4xl">Будем рады <span className="italic text-sage">вас видеть.</span></h3></div>
+              <a href="https://yandex.ru/maps/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 self-start rounded-full border border-stone-200 bg-white px-4 py-3 text-xs font-semibold text-espresso transition hover:border-sage/40 sm:self-auto">Маршрут в Яндекс Картах <ArrowRight size={14} /></a>
+            </div>
+            <div className="group relative overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white p-2 shadow-[0_15px_50px_rgba(28,26,23,.05)] sm:p-3">
+              <div className="relative overflow-hidden rounded-[1.25rem] bg-[#E9EEE5]">
+                <iframe title="Яндекс Карты — ТЦ Старая Горбушка, улица Барклая, 8, Москва" src="https://yandex.ru/map-widget/v1/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж&z=16" width="100%" height="380" frameBorder="0" allowFullScreen className="block h-[300px] w-full sm:h-[380px]" loading="lazy" />
+              </div>
+              <div className="flex flex-col gap-2 px-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+                <div className="flex items-start gap-3"><MapPin size={18} className="mt-0.5 shrink-0 text-sage" /><div><p className="text-sm font-semibold text-espresso">ТЦ «Старая Горбушка», 4-й этаж</p><p className="mt-1 text-xs leading-5 text-stone-500">ул. Барклая, д. 8, Москва</p></div></div>
+                <span className="text-[10px] uppercase tracking-[.15em] text-stone-400">Москва</span>
+              </div>
+            </div>
+          </motion.div>
         </section>
       </main>
 
