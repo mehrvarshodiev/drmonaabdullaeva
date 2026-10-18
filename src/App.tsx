@@ -132,7 +132,6 @@ function BeforeAfterCard({ item }: { item: DentalCase }) {
   )
 }
 
-const CLINIC_COORDINATES: [number, number] = [55.741186, 37.502687]
 const CLINIC_MAP_URL = 'https://yandex.ru/maps/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm'
 const CLINIC_ROUTE_URL = 'https://yandex.ru/maps/?rtext=~55.741186%2C37.502687&rtt=auto'
 const YANDEX_MAP_FALLBACK_URL = 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map'
