@@ -28,3 +28,5 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .clinic-map [class*="ground-pane"] { filter: grayscale(30%) contrast(110%); }
 .clinic-map [class*="copyrights-pane"] { opacity: .58; }
 .clinic-map [class*="controls-pane"] { filter: saturate(.55); }
+
+.clinic-map-fallback { filter: grayscale(30%) contrast(110%); }
