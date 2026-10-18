@@ -11,6 +11,11 @@ button, input, select { font: inherit; }
 input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #5B6B54; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 
+
+/* Thin page-scroll progress indicator pinned to the top edge. */
+.scroll-progress-track { position: fixed; inset: 0 0 auto; z-index: 1000; height: 3px; overflow: hidden; background: rgba(91, 107, 84, .12); pointer-events: none; }
+.scroll-progress-bar { width: 100%; height: 100%; transform-origin: left center; background: #5B6B54; box-shadow: 0 0 8px rgba(91, 107, 84, .22); transition: transform 90ms linear; }
+
 /* Lightweight first-paint preloader */
 #app-preloader { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; background: #FAFAF7; opacity: 1; visibility: visible; transition: opacity .35s ease, visibility .35s ease; }
 #app-preloader.app-preloader--hidden { opacity: 0; visibility: hidden; pointer-events: none; }
