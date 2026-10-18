@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
@@ -132,16 +132,13 @@ function BeforeAfterCard({ item }: { item: DentalCase }) {
   )
 }
 
-const YandexMap = memo(function YandexMap() {
-  const mapUrl = useMemo(
-    () => 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map',
-    [],
-  )
+const YANDEX_MAP_URL = 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map'
 
+const YandexMap = memo(function YandexMap() {
   return (
     <iframe
       title="Карта проезда — улица Барклая, 8, Москва"
-      src={mapUrl}
+      src={YANDEX_MAP_URL}
       width="100%"
       height="380"
       frameBorder="0"
@@ -165,11 +162,13 @@ function App() {
 
     const fadeTimer = window.setTimeout(() => {
       preloader.classList.add('app-preloader--hidden')
-      const removeTimer = window.setTimeout(() => preloader.remove(), 450)
-      return () => window.clearTimeout(removeTimer)
     }, 180)
+    const removeTimer = window.setTimeout(() => preloader.remove(), 630)
 
-    return () => window.clearTimeout(fadeTimer)
+    return () => {
+      window.clearTimeout(fadeTimer)
+      window.clearTimeout(removeTimer)
+    }
   }, [])
 
   const reveal = reduceMotion ? {} : { initial: 'hidden' as const, whileInView: 'visible' as const, viewport: { once: true, amount: 0.15 }, variants: fadeUp }
