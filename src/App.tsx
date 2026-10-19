@@ -226,7 +226,7 @@ function App() {
     if (window.location.pathname + window.location.search + window.location.hash !== expectedPath) {
       window.history.replaceState(null, '', expectedPath)
     }
-    const canonicalUrl = window.location.origin + localizedPath(locale)
+    const canonicalUrl = window.location.origin + localizedPath(locale).split(/[?#]/)[0]
     let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
     if (!canonical) {
       canonical = document.createElement('link')
@@ -243,7 +243,7 @@ function App() {
         alternate.hreflang = languageTag
         document.head.appendChild(alternate)
       }
-      alternate.href = window.location.origin + localizedPath(alternateLocale)
+      alternate.href = window.location.origin + localizedPath(alternateLocale).split(/[?#]/)[0]
     })
     let defaultAlternate = document.querySelector<HTMLLinkElement>('link[rel="alternate"][hreflang="x-default"]')
     if (!defaultAlternate) {
@@ -252,7 +252,7 @@ function App() {
       defaultAlternate.hreflang = 'x-default'
       document.head.appendChild(defaultAlternate)
     }
-    defaultAlternate.href = window.location.origin + localizedPath('ru')
+    defaultAlternate.href = window.location.origin + localizedPath('ru').split(/[?#]/)[0]
     root.dataset.theme = theme
     root.classList.toggle('dark', theme === 'dark')
     root.style.colorScheme = theme
@@ -268,7 +268,8 @@ function App() {
   }, [])
 
   const changeLocale = (nextLocale: Locale) => {
-    const serviceIndex = messages[locale].form.serviceOptions.indexOf(form.service)
+    const currentServiceOptions: readonly string[] = messages[locale].form.serviceOptions
+    const serviceIndex = currentServiceOptions.indexOf(form.service)
     try { window.localStorage.setItem('dr-mona-locale', nextLocale) } catch { /* Locale still applies for this session. */ }
     window.history.pushState(null, '', localizedPath(nextLocale))
     setLocale(nextLocale)
