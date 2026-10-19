@@ -18,7 +18,7 @@ export const localeMeta: Record<Locale, { code: string; flag: string; nativeName
 export const messages = { ru, tg, kg, uz, kz } as const
 export type Messages = typeof ru
 
-export function isLocale(value: string | undefined): value is Locale {
+export function isLocale(value: string | null | undefined): value is Locale {
   return !!value && (locales as readonly string[]).includes(value)
 }
 
