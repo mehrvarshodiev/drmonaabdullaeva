@@ -7,6 +7,25 @@
     <meta name="description" content="Доктор Мона Абдуллаева — эстетическая стоматология и ортодонтия в Москве. Бесплатная диагностика и снимок на первом приёме." />
     <script>
       (() => {
+        const supported = ['ru', 'tg', 'kg', 'uz', 'kz'];
+        const pathLocale = location.pathname.split('/').filter(Boolean)[0];
+        let locale = supported.includes(pathLocale) ? pathLocale : null;
+        try {
+          if (!locale) {
+            const savedLocale = localStorage.getItem('dr-mona-locale');
+            if (supported.includes(savedLocale)) locale = savedLocale;
+          }
+        } catch {}
+        if (!locale) {
+          const browserLanguage = (navigator.languages && navigator.languages[0] || navigator.language || 'ru').toLowerCase();
+          locale = browserLanguage.startsWith('tg') || browserLanguage.startsWith('tj') ? 'tg'
+            : browserLanguage.startsWith('ky') || browserLanguage.startsWith('kg') ? 'kg'
+            : browserLanguage.startsWith('uz') ? 'uz'
+            : browserLanguage.startsWith('kk') || browserLanguage.startsWith('kz') ? 'kz' : 'ru';
+        }
+        const htmlLang = ({ ru: 'ru', tg: 'tg', kg: 'ky', uz: 'uz', kz: 'kk' })[locale] || 'ru';
+        document.documentElement.lang = htmlLang;
+        if (!pathLocale && locale !== 'ru') history.replaceState(null, '', '/' + locale + location.search + location.hash);
         let theme = 'light';
         try {
           const savedTheme = localStorage.getItem('dr-mona-theme');
