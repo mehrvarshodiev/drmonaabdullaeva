@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react'
-import type { ChangeEvent, FormEvent, MouseEvent, ReactNode } from 'react'
+import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
