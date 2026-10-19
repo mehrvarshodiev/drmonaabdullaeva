@@ -46,7 +46,30 @@
     "case": "HOLAT",
     "complexity": "Murakkablik",
     "disclaimer": "Rasmlar namuna sifatida berilgan. Haqiqiy natijalar individual.",
-    "legal": "*Davolash muddati va hajmi ko‘rikdan so‘ng belgilanadi. Rasmlar vizual misollar, tasdiqlangan klinik holatlar emas."
+    "legal": "*Davolash muddati va hajmi ko‘rikdan so‘ng belgilanadi. Rasmlar vizual misollar, tasdiqlangan klinik holatlar emas.",
+    "items": [
+      {
+        "title": "Estetik restavratsiya",
+        "subtitle": "Shakl va tabiiy rangni tiklash",
+        "time": "1 tashrif",
+        "complexity": "Yuqori",
+        "tag": "ESTETIKA"
+      },
+      {
+        "title": "Tishlashni tuzatish",
+        "subtitle": "Ortodontiya yordamida uyg‘un tabassum sari",
+        "time": "Individual",
+        "complexity": "Kompleks",
+        "tag": "ORTODONTIYA"
+      },
+      {
+        "title": "Kariesni davolash",
+        "subtitle": "Tafsilotlarga e’tibor bilan ehtiyotkor tiklash",
+        "time": "1 tashrif*",
+        "complexity": "Ko‘rikdan so‘ng",
+        "tag": "TERAPIYA"
+      }
+    ]
   },
   "services": {
     "eyebrow": "Qanday yordam bera olaman",
