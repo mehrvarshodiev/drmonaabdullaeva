@@ -347,7 +347,7 @@ function App() {
           </a>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Основная навигация">
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#home" onClick={scrollToTop}>Главная</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#home">Главная</a>
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#services">Услуги</a>
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#cases">Кейсы</a>
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#approach">Подход</a>
@@ -398,10 +398,10 @@ function App() {
               <div><p className="text-sm font-semibold text-espresso">Бесплатная диагностика и снимок</p><p className="mt-1 text-xs leading-5 text-stone-500">На первом приёме — по предварительной записи и при наличии показаний.</p></div>
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <a href="#contacts" onClick={handleSectionNavigation} className="group inline-flex min-h-[54px] items-center justify-center gap-3 rounded-full bg-sage px-6 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,107,84,.2)] transition hover:-translate-y-0.5 hover:bg-sage-dark">
+              <a href="#contacts" className="group inline-flex min-h-[54px] items-center justify-center gap-3 rounded-full bg-sage px-6 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,107,84,.2)] transition hover:-translate-y-0.5 hover:bg-sage-dark">
                 Записаться на бесплатный осмотр <ArrowRight size={16} className="transition group-hover:translate-x-1" />
               </a>
-              <a href="#cases" onClick={handleSectionNavigation} className="inline-flex min-h-[48px] items-center justify-center gap-2 text-sm font-medium text-stone-600 transition hover:text-sage">Посмотреть работы <ArrowDownRight size={15} /></a>
+              <a href="#cases" className="inline-flex min-h-[48px] items-center justify-center gap-2 text-sm font-medium text-stone-600 transition hover:text-sage">Посмотреть работы <ArrowDownRight size={15} /></a>
             </div>
             <div className="mt-9 flex items-center gap-4 border-t border-stone-200 pt-5">
               <div className="flex -space-x-2">
@@ -471,7 +471,7 @@ function App() {
                 <p className="mt-3 text-sm leading-6 text-stone-500">{description}</p>
                 <div className="mt-auto flex items-center justify-between border-t border-stone-100 pt-5 mt-6">
                   <span className="text-[10px] uppercase tracking-[.12em] text-stone-400">{note}</span>
-                  <a href="#contacts" onClick={handleSectionNavigation} aria-label={`Записаться: ${title}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 transition group-hover:border-sage group-hover:bg-sage group-hover:text-white"><MoveUpRight size={15} /></a>
+                  <a href="#contacts" aria-label={`Записаться: ${title}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 transition group-hover:border-sage group-hover:bg-sage group-hover:text-white"><MoveUpRight size={15} /></a>
                 </div>
               </motion.article>
             ))}
@@ -591,8 +591,8 @@ function App() {
       <footer className="bg-alabaster">
         <div className="section-wrap">
           <div className="flex flex-col gap-7 border-b border-stone-200 py-8 sm:flex-row sm:items-center sm:justify-between">
-            <a href="#home" onClick={scrollToTop} className="flex flex-col leading-none"><span className="font-serif text-lg tracking-[.09em]">DR. MONA</span><span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500">ABDULLAEVA</span></a>
-            <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#home" onClick={scrollToTop} className="hover:text-sage">Главная</a><a href="#services" onClick={handleSectionNavigation} className="hover:text-sage">Услуги</a><a href="#cases" onClick={handleSectionNavigation} className="hover:text-sage">Кейсы</a><a href="#approach" onClick={handleSectionNavigation} className="hover:text-sage">Подход</a><a href="#contacts" onClick={handleSectionNavigation} className="hover:text-sage">Контакты</a></nav>
+            <a href="#home" className="flex flex-col leading-none"><span className="font-serif text-lg tracking-[.09em]">DR. MONA</span><span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500">ABDULLAEVA</span></a>
+            <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#home" className="hover:text-sage">Главная</a><a href="#services" className="hover:text-sage">Услуги</a><a href="#cases" className="hover:text-sage">Кейсы</a><a href="#approach" className="hover:text-sage">Подход</a><a href="#contacts" className="hover:text-sage">Контакты</a></nav>
             <div className="flex gap-2">
               <a href="https://www.instagram.com/drmonaabdullaeva/" target="_blank" rel="noreferrer" aria-label="Instagram доктора Моны" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><Instagram size={16} /></a>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Запись в WhatsApp" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><MessageCircle size={16} /></a>
