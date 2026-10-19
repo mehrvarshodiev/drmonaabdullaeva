@@ -354,9 +354,9 @@ function App() {
     event.preventDefault()
     const message = [
       copy.form.success,
-      `Имя: ${form.name.trim()}`,
-      `Телефон: ${form.phone.trim()}`,
-      `Услуга: ${form.service}`,
+      `${copy.form.name}: ${form.name.trim()}`,
+      `${copy.form.phone}: ${form.phone.trim()}`,
+      `${copy.form.serviceLabel}: ${form.service}`,
     ].join('\n')
     setSubmitted(true)
     window.open(`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
@@ -418,7 +418,7 @@ function App() {
       <div
         className="scroll-progress-track"
         role="progressbar"
-        aria-label="Прогресс прокрутки страницы"
+        aria-label={copy.common.scrollProgress}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(scrollProgress * 100)}
@@ -520,7 +520,7 @@ function App() {
             <div className="absolute -right-4 -top-5 h-28 w-28 rounded-full border border-taupe/50 sm:-right-7 sm:-top-7 sm:h-36 sm:w-36" />
             <div className="relative grid grid-cols-[1fr_.34fr] gap-3 sm:gap-4">
               <div className="image-grain relative aspect-[.79] overflow-hidden rounded-t-[45%] rounded-b-[1.6rem] bg-ivory">
-                <img src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1000&q=90" alt="Светлый современный стоматологический кабинет" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />
+                <img src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1000&q=90" alt={copy.hero.clinicAlt} className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />
                 <div className="absolute inset-x-4 bottom-5 z-10 text-white sm:inset-x-6 sm:bottom-7">
                   <span className="text-[9px] uppercase tracking-[.2em] text-white/75">{copy.hero.imageTag}</span>
                   <p className="mt-2 max-w-[240px] font-serif text-2xl leading-tight sm:text-3xl">{copy.hero.imageTitle}</p>
@@ -528,7 +528,7 @@ function App() {
               </div>
               <div className="flex flex-col gap-3 pt-12 sm:gap-4 sm:pt-16">
                 <div className="aspect-[.8] overflow-hidden rounded-[1.25rem] bg-[#E7E5DA]">
-                  <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=500&q=85" alt="Демонстрационное фото стоматологической эстетики" className="h-full w-full object-cover" loading="lazy" />
+                  <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=500&q=85" alt={copy.hero.demoAlt} className="h-full w-full object-cover" loading="lazy" />
                 </div>
                 <div className="flex flex-1 flex-col justify-center rounded-[1.25rem] bg-ivory p-3 sm:p-4">
                   <Sparkles size={20} strokeWidth={1.4} className="text-sage" />
@@ -576,7 +576,7 @@ function App() {
                 <p className="mt-3 text-sm leading-6 text-stone-500">{description}</p>
                 <div className="mt-auto flex items-center justify-between border-t border-stone-100 pt-5 mt-6">
                   <span className="text-[10px] uppercase tracking-[.12em] text-stone-400">{note}</span>
-                  <a href="#contacts" aria-label={`Записаться: ${title}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 transition group-hover:border-sage group-hover:bg-sage group-hover:text-white"><MoveUpRight size={15} /></a>
+                  <a href="#contacts" aria-label={`${copy.nav.book}: ${title}`} className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 transition group-hover:border-sage group-hover:bg-sage group-hover:text-white"><MoveUpRight size={15} /></a>
                 </div>
               </motion.article>
             ))}
@@ -616,18 +616,18 @@ function App() {
                   <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">Instagram</span><span className="mt-1 block text-xs text-stone-500">@drmonaabdullaeva</span></span><MoveUpRight size={16} className="text-stone-400" />
                 </a>
               </div>
-              <a href="https://yandex.ru/maps/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж" target="_blank" rel="noreferrer" className="mt-5 flex items-start gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={18} /></span><span className="min-w-0 flex-1"><span className="block text-xs font-semibold uppercase tracking-[.14em] text-sage">Адрес приёма</span><span className="mt-1 block text-sm leading-6 text-espresso">{copy.contacts.address}<br />{copy.contacts.addressFloor}</span><span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500">Открыть в Яндекс Картах <MoveUpRight size={13} /></span></span></a>
+              <a href="https://yandex.ru/maps/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж" target="_blank" rel="noreferrer" className="mt-5 flex items-start gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={18} /></span><span className="min-w-0 flex-1"><span className="block text-xs font-semibold uppercase tracking-[.14em] text-sage">Адрес приёма</span><span className="mt-1 block text-sm leading-6 text-espresso">{copy.contacts.address}<br />{copy.contacts.addressFloor}</span><span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500">{copy.contacts.openMaps} <MoveUpRight size={13} /></span></span></a>
             </motion.div>
 
             <motion.div {...reveal} className="rounded-[1.75rem] border border-stone-200/80 bg-white p-5 shadow-[0_15px_50px_rgba(28,26,23,.04)] sm:p-8 lg:p-10">
               <div className="mb-7 flex items-start justify-between gap-4">
-                <div><span className="text-[10px] font-semibold uppercase tracking-[.2em] text-sage">Запись на приём</span><h3 className="mt-2 font-serif text-3xl tracking-[-.03em]">Расскажите о себе</h3></div>
+                <div><span className="text-[10px] font-semibold uppercase tracking-[.2em] text-sage">{copy.form.title}</span><h3 className="mt-2 font-serif text-3xl tracking-[-.03em]">{copy.form.subtitle}</h3></div>
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ivory text-sage"><ArrowDownRight size={19} /></span>
               </div>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label htmlFor="name" className="mb-2 block text-xs font-medium text-stone-600">{copy.form.name}</label>
-                  <input id="name" name="name" autoComplete="name" required minLength={2} value={form.name} onChange={(e: ChangeEvent<HTMLInputElement>) => { setForm({ ...form, name: e.target.value }); setSubmitted(false) }} placeholder="Как к вам обращаться?" className="h-13 w-full rounded-xl border border-stone-200 bg-[#FCFCFA] px-4 py-3.5 text-sm outline-none transition placeholder:text-stone-400 focus:border-sage focus:bg-white" />
+                  <input id="name" name="name" autoComplete="name" required minLength={2} value={form.name} onChange={(e: ChangeEvent<HTMLInputElement>) => { setForm({ ...form, name: e.target.value }); setSubmitted(false) }} placeholder={copy.form.namePlaceholder} className="h-13 w-full rounded-xl border border-stone-200 bg-[#FCFCFA] px-4 py-3.5 text-sm outline-none transition placeholder:text-stone-400 focus:border-sage focus:bg-white" />
                 </div>
                 <div>
                   <label htmlFor="phone" className="mb-2 block text-xs font-medium text-stone-600">{copy.form.phone}</label>
@@ -665,7 +665,7 @@ function App() {
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={19} /></span>
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">{copy.contacts.addressLabel}</p>
-                      <p className="mt-2 text-sm leading-6 text-espresso">Москва, ул. Барклая, д. 8<br />ТЦ «Старая Горбушка», 4-й этаж</p>
+                      <p className="mt-2 text-sm leading-6 text-espresso">{copy.contacts.address}<br />{copy.contacts.addressFloor}</p>
                       <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500 underline decoration-stone-300 underline-offset-4 transition hover:text-sage">{copy.contacts.openMaps} <MoveUpRight size={12} /></a>
                     </div>
                   </div>
@@ -710,7 +710,7 @@ function App() {
         </div>
       </footer>
 
-      <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" className="fixed bottom-4 right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-sage px-5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(37,54,34,.28)] transition hover:-translate-y-1 hover:bg-sage-dark sm:bottom-6 sm:right-6" aria-label="Записаться в WhatsApp">
+      <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" className="fixed bottom-4 right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-sage px-5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(37,54,34,.28)] transition hover:-translate-y-1 hover:bg-sage-dark sm:bottom-6 sm:right-6" aria-label={copy.nav.bookWhatsApp}>
         <MessageCircle size={19} /><span>{copy.nav.book}</span>
       </a>
     </div>
