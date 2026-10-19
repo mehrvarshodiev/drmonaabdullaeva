@@ -5,7 +5,7 @@ import type { LucideIcon } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowDownRight, ArrowRight, Check, ChevronDown, Clock3, Instagram,
-  MapPin, Menu, MessageCircle, MoveUpRight, ShieldCheck, Sparkles, X
+  MapPin, Menu, MessageCircle, Moon, MoveUpRight, ShieldCheck, Sparkles, Sun, X
 } from 'lucide-react'
 
 const whatsappMessage = 'Здравствуйте, хочу записаться на бесплатную диагностику к доктору Моне Абдуллаевой.'
@@ -195,6 +195,13 @@ const YandexMap = memo(function YandexMap() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const savedTheme = window.localStorage.getItem('dr-mona-theme')
+      if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
+    } catch { /* Storage may be unavailable in private browsing. */ }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
   const [headerVisible, setHeaderVisible] = useState(true)
   const [scrollProgress, setScrollProgress] = useState(0)
   const programmaticNavigationRef = useRef(false)
@@ -202,6 +209,33 @@ function App() {
   const [form, setForm] = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
   const [submitted, setSubmitted] = useState(false)
   const reduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    const root = document.documentElement
+    root.dataset.theme = theme
+    root.classList.toggle('dark', theme === 'dark')
+    root.style.colorScheme = theme
+  }, [theme])
+
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-color-scheme: dark)')
+    const syncSystemTheme = () => {
+      try {
+        if (window.localStorage.getItem('dr-mona-theme')) return
+      } catch { /* Fall back to the live system preference. */ }
+      setTheme(preference.matches ? 'dark' : 'light')
+    }
+    preference.addEventListener('change', syncSystemTheme)
+    return () => preference.removeEventListener('change', syncSystemTheme)
+  }, [])
+
+  const toggleTheme = () => {
+    setTheme((current) => {
+      const next = current === 'dark' ? 'light' : 'dark'
+      try { window.localStorage.setItem('dr-mona-theme', next) } catch { /* Theme still changes for this session. */ }
+      return next
+    })
+  }
 
   useEffect(() => {
     let previousY = window.scrollY
@@ -355,6 +389,16 @@ function App() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+              aria-pressed={theme === 'dark'}
+              title={theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-200 text-sage transition duration-300 hover:border-sage hover:bg-sage/10 focus-visible:outline-offset-4"
+            >
+              {theme === 'dark' ? <Sun size={17} strokeWidth={1.8} /> : <Moon size={17} strokeWidth={1.8} />}
+            </button>
             <a href={whatsappUrl} target="_blank" rel="noreferrer" className="hidden items-center gap-2 rounded-full bg-sage px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-sage-dark sm:inline-flex">
               <MessageCircle size={14} /> Записаться <ArrowRight size={13} />
             </a>
