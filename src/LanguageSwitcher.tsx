@@ -32,13 +32,13 @@ export default function LanguageSwitcher({ locale, onChange, mobile = false }: L
 
   return (
     <div ref={rootRef} className={`relative ${mobile ? 'w-full' : 'shrink-0'}`}>
-      {mobile && <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.18em] text-stone-400">Язык сайта / Language</p>}
+      {mobile && <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.18em] text-stone-400">{current.label}</p>}
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Язык сайта: ${current.nativeName}`}
+        aria-label={`${current.label}: ${current.nativeName}`}
         className={`group flex items-center gap-2 rounded-full border border-stone-200/80 bg-white/60 text-xs font-semibold text-espresso shadow-sm backdrop-blur-xl transition duration-200 hover:border-sage/50 hover:bg-sage/10 focus-visible:outline-offset-4 dark:bg-white/5 ${mobile ? 'min-h-[48px] w-full justify-between rounded-2xl px-4' : 'h-10 px-3'}`}
       >
         <span className="flex items-center gap-2">
