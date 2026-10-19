@@ -2,6 +2,8 @@ import { memo, useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
+import LanguageSwitcher from './LanguageSwitcher'
+import { getInitialLocale, localeMeta, localizedPath, localeFromPath, messages, type Locale, type Messages } from './i18n'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowDownRight, ArrowRight, Check, ChevronDown, Clock3, Instagram,
@@ -86,7 +88,7 @@ function Eyebrow({ children, light = false }: { children: ReactNode; light?: boo
   )
 }
 
-function BeforeAfterCard({ item }: { item: DentalCase }) {
+function BeforeAfterCard({ item, labels }: { item: DentalCase; labels: Messages['cases'] }) {
   const [position, setPosition] = useState(50)
 
   return (
@@ -104,8 +106,8 @@ function BeforeAfterCard({ item }: { item: DentalCase }) {
             <span className="text-xs tracking-[-.2em]">‹ ›</span>
           </span>
         </div>
-        <div className="absolute left-3 top-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.15em] text-espresso backdrop-blur">До</div>
-        <div className="absolute right-3 top-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.15em] text-espresso backdrop-blur">После</div>
+        <div className="absolute left-3 top-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.15em] text-espresso backdrop-blur">{labels.before}</div>
+        <div className="absolute right-3 top-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.15em] text-espresso backdrop-blur">{labels.after}</div>
         <input
           aria-label={`${labels.before} / ${labels.after}: ${item.title}`}
           type="range" min="0" max="100" value={position}
@@ -113,20 +115,20 @@ function BeforeAfterCard({ item }: { item: DentalCase }) {
           className="absolute inset-x-0 bottom-0 z-30 h-full w-full cursor-ew-resize opacity-0"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-center justify-between bg-gradient-to-t from-black/40 to-transparent px-4 pb-4 pt-10 text-[9px] font-semibold uppercase tracking-[.16em] text-white/90">
-          <span>Переместите ползунок</span><span>{item.tag}</span>
+          <span>{labels.slider}</span><span>{item.tag}</span>
         </div>
       </div>
       <div className="p-5 sm:p-6">
         <div className="mb-3 flex items-center justify-between text-[10px] font-medium tracking-[.14em] text-stone-400">
-          <span>КЕЙС {item.number}</span>
+          <span>{labels.case} {item.number}</span>
           <span className="flex items-center gap-1.5"><Clock3 size={12} /> {item.time}</span>
         </div>
         <h3 className="font-serif text-[23px] leading-tight tracking-[-.025em] text-espresso">{item.title}</h3>
         <p className="mt-2 text-sm leading-6 text-stone-500">{item.subtitle}</p>
         <div className="mt-5 flex items-center justify-between border-t border-stone-100 pt-4 text-xs">
-          <span className="text-stone-400">Сложность</span><span className="font-medium text-espresso">{item.complexity}</span>
+          <span className="text-stone-400">{labels.complexity}</span><span className="font-medium text-espresso">{item.complexity}</span>
         </div>
-        <p className="mt-3 text-[10px] leading-4 text-stone-400">Изображения демонстрационные. Реальные результаты индивидуальны.</p>
+        <p className="mt-3 text-[10px] leading-4 text-stone-400">{labels.disclaimer}</p>
       </div>
     </motion.article>
   )
@@ -136,14 +138,14 @@ const CLINIC_MAP_URL = 'https://yandex.ru/maps/?ll=37.502687%2C55.741186&z=17&pt
 const CLINIC_ROUTE_URL = 'https://yandex.ru/maps/?rtext=~55.741186%2C37.502687&rtt=auto'
 const YANDEX_MAP_FALLBACK_URL = 'https://yandex.ru/map-widget/v1/?ll=37.502687%2C55.741186&z=17&pt=37.502687%2C55.741186%2Cpm2rdm&l=map'
 
-const YandexMap = memo(function YandexMap() {
+const YandexMap = memo(function YandexMap({ labels }: { labels: Messages['contacts'] }) {
   const [mapInteractive, setMapInteractive] = useState(false)
   const [balloonOpen, setBalloonOpen] = useState(false)
 
   return (
     <div className="relative h-[300px] w-full overflow-hidden bg-[#ECEFE8] sm:h-[520px]">
       <iframe
-        title="Интерактивная Яндекс Карта — клиника Dr. Mona Abdullaeva, Москва, улица Барклая, 8"
+        title={labels.mapTitle}
         src={YANDEX_MAP_FALLBACK_URL}
         width="100%"
         height="100%"
@@ -157,10 +159,10 @@ const YandexMap = memo(function YandexMap() {
           type="button"
           onClick={() => setMapInteractive(true)}
           className="absolute inset-0 z-[5] flex items-end justify-center bg-transparent p-4 text-center"
-          aria-label="Активировать управление картой"
+          aria-label={labels.mapActivateLabel}
         >
           <span className="rounded-full border border-white/80 bg-white/95 px-4 py-3 text-xs font-medium text-espresso shadow-lg backdrop-blur">
-            Нажмите на карту, чтобы перемещать и масштабировать
+            {labels.mapActivate}
           </span>
         </button>
       )}
@@ -172,22 +174,22 @@ const YandexMap = memo(function YandexMap() {
           setMapInteractive(true)
         }}
         className="absolute left-1/2 top-1/2 z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-white bg-sage shadow-[0_5px_20px_rgba(35,45,32,.3)] transition hover:scale-105"
-        aria-label="Показать информацию о клинике"
+        aria-label={labels.mapInfo}
         aria-expanded={balloonOpen}
       >
         <span className="h-3 w-3 rounded-full bg-white" />
       </button>
       {balloonOpen && (
         <div className="absolute left-1/2 top-[calc(50%-4.25rem)] z-20 w-[min(290px,calc(100%-2rem))] -translate-x-1/2 rounded-2xl border border-stone-200/80 bg-white/95 p-4 shadow-[0_12px_40px_rgba(28,26,23,.15)] backdrop-blur">
-          <button type="button" onClick={() => setBalloonOpen(false)} aria-label="Закрыть информацию о клинике" className="absolute right-3 top-3 text-stone-400 hover:text-espresso"><X size={15} /></button>
+          <button type="button" onClick={() => setBalloonOpen(false)} aria-label={labels.mapClose} className="absolute right-3 top-3 text-stone-400 hover:text-espresso"><X size={15} /></button>
           <p className="pr-4 font-serif text-lg leading-tight text-espresso">Dr. Mona Abdullaeva</p>
-          <p className="mt-1 text-xs leading-5 text-stone-500">Клиника эстетической стоматологии Dr. Mona Abdullaeva</p>
+          <p className="mt-1 text-xs leading-5 text-stone-500">{labels.mapTitle}</p>
           <p className="mt-2 text-[11px] leading-4 text-sage">ТЦ «Старая Горбушка» · 4-й этаж</p>
-          <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-espresso underline decoration-stone-300 underline-offset-4">Открыть в Яндекс Картах <MoveUpRight size={12} /></a>
+          <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-espresso underline decoration-stone-300 underline-offset-4">{labels.openMaps} <MoveUpRight size={12} /></a>
         </div>
       )}
       <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="absolute bottom-4 right-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/95 px-4 py-3 text-xs font-semibold text-espresso shadow-lg backdrop-blur transition hover:-translate-y-0.5">
-        Открыть карту <MoveUpRight size={13} />
+        {labels.mapOpen} <MoveUpRight size={13} />
       </a>
     </div>
   )
@@ -195,6 +197,7 @@ const YandexMap = memo(function YandexMap() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [locale, setLocale] = useState<Locale>(() => getInitialLocale())
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       const savedTheme = window.localStorage.getItem('dr-mona-theme')
@@ -209,6 +212,9 @@ function App() {
   const [form, setForm] = useState<{ name: string; phone: string; service: string }>(() => ({ name: '', phone: '', service: messages[getInitialLocale()].form.serviceOptions[0] }))
   const [submitted, setSubmitted] = useState(false)
   const reduceMotion = useReducedMotion()
+  const copy = messages[locale]
+  const localizedCases = cases.map((item, index) => ({ ...item, ...copy.cases.items[index] }))
+  const localizedServices = services.map((item, index) => ({ ...item, ...copy.services.items[index] }))
 
   useEffect(() => {
     const root = document.documentElement
@@ -321,7 +327,7 @@ function App() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const message = [
-      'Здравствуйте! Хочу записаться к доктору Моне Абдуллаевой.',
+      copy.form.success,
       `Имя: ${form.name.trim()}`,
       `Телефон: ${form.phone.trim()}`,
       `Услуга: ${form.service}`,
@@ -394,7 +400,7 @@ function App() {
         <div className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress})` }} />
       </div>
       <div className="border-b border-stone-200/70 bg-ivory px-4 py-2 text-center text-[9px] font-medium uppercase tracking-[.17em] text-stone-500 sm:text-[10px]">
-        Эстетическая стоматология · Москва · Забота, которую видно в деталях
+        {copy.topline}
       </div>
 
       <header
@@ -407,21 +413,21 @@ function App() {
             <span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500 sm:text-[9px]">ABDULLAEVA</span>
           </a>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Основная навигация">
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#home">Главная</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#services">Услуги</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#cases">Кейсы</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#approach">Подход</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#contacts">Контакты</a>
+          <nav className="hidden items-center gap-7 lg:flex" aria-label={copy.nav.main}>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#home">{copy.nav.home}</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#services">{copy.nav.services}</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#cases">{copy.nav.cases}</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#approach">{copy.nav.approach}</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#contacts">{copy.nav.contacts}</a>
           </nav>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+              aria-label={theme === 'dark' ? copy.common.themeLight : copy.common.themeDark}
               aria-pressed={theme === 'dark'}
-              title={theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
+              title={theme === 'dark' ? copy.common.themeLightTitle : copy.common.themeDarkTitle}
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-200 text-sage transition duration-300 hover:border-sage hover:bg-sage/10 focus-visible:outline-offset-4"
             >
               {theme === 'dark' ? <Sun size={17} strokeWidth={1.8} /> : <Moon size={17} strokeWidth={1.8} />}
@@ -430,7 +436,7 @@ function App() {
             <a href={whatsappUrl} target="_blank" rel="noreferrer" className="hidden items-center gap-2 rounded-full bg-sage px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-sage-dark sm:inline-flex">
               <MessageCircle size={14} /> {copy.nav.book} <ArrowRight size={13} />
             </a>
-            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 lg:hidden" aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 lg:hidden" aria-label={menuOpen ? copy.nav.menuClose : copy.nav.menuOpen} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
@@ -448,7 +454,8 @@ function App() {
                 ].map(([label, href]) => (
                   <a key={href} href={href}  className="border-b border-stone-100 py-4 text-sm">{label}</a>
                 ))}
-                <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={closeMenu} className="my-4 flex items-center justify-center gap-2 rounded-full bg-sage py-3.5 text-sm font-semibold text-white"><MessageCircle size={16} /> Записаться в WhatsApp</a>
+                <LanguageSwitcher locale={locale} onChange={changeLocale} mobile />
+                <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={closeMenu} className="my-4 flex items-center justify-center gap-2 rounded-full bg-sage py-3.5 text-sm font-semibold text-white"><MessageCircle size={16} /> {copy.nav.bookWhatsApp}</a>
               </div>
             </motion.nav>
           )}
@@ -458,28 +465,28 @@ function App() {
       <main>
         <section id="home" className="section-wrap grid items-center gap-10 pb-16 pt-10 sm:pb-24 sm:pt-16 lg:min-h-[660px] lg:grid-cols-[1.03fr_.97fr] lg:gap-16 lg:py-16">
           <motion.div {...reveal} className="relative z-10">
-            <Eyebrow>Улыбка, в которой вы — это вы</Eyebrow>
+            <Eyebrow>{copy.hero.eyebrow}</Eyebrow>
             <h1 className="max-w-[650px] font-serif text-[clamp(2.9rem,8vw,5.8rem)] leading-[.99] tracking-[-.055em] text-espresso">
-              Твоя идеальная улыбка <span className="italic text-sage">начинается здесь.</span>
+              {copy.hero.title} <span className="italic text-sage">{copy.hero.titleAccent}</span>
             </h1>
             <p className="mt-6 max-w-[470px] text-[15px] leading-7 text-stone-600 sm:mt-7 sm:text-base sm:leading-8">
-              Эстетическая стоматология и ортодонтия с вниманием к каждой детали. Лечение кариеса, эстетические реставрации и брекет-системы — с заботой о вашем комфорте.
+              {copy.hero.description}
             </p>
             <div className="mt-6 flex max-w-md items-start gap-3 rounded-2xl border border-sage/15 bg-[#F1F3EE] p-4">
               <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sage text-white"><Check size={14} /></span>
-              <div><p className="text-sm font-semibold text-espresso">Бесплатная диагностика и снимок</p><p className="mt-1 text-xs leading-5 text-stone-500">На первом приёме — по предварительной записи и при наличии показаний.</p></div>
+              <div><p className="text-sm font-semibold text-espresso">{copy.hero.offer}</p><p className="mt-1 text-xs leading-5 text-stone-500">{copy.hero.offerNote}</p></div>
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
               <a href="#contacts" className="group inline-flex min-h-[54px] items-center justify-center gap-3 rounded-full bg-sage px-6 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,107,84,.2)] transition hover:-translate-y-0.5 hover:bg-sage-dark">
-                Записаться на бесплатный осмотр <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+                {copy.hero.cta} <ArrowRight size={16} className="transition group-hover:translate-x-1" />
               </a>
-              <a href="#cases" className="inline-flex min-h-[48px] items-center justify-center gap-2 text-sm font-medium text-stone-600 transition hover:text-sage">Посмотреть работы <ArrowDownRight size={15} /></a>
+              <a href="#cases" className="inline-flex min-h-[48px] items-center justify-center gap-2 text-sm font-medium text-stone-600 transition hover:text-sage">{copy.hero.works} <ArrowDownRight size={15} /></a>
             </div>
             <div className="mt-9 flex items-center gap-4 border-t border-stone-200 pt-5">
               <div className="flex -space-x-2">
                 {['photo-1559839734-2b71ea197ec2','photo-1612349317150-e413f6a5b16d','photo-1582750433449-648ed127bb54'].map((id) => <img key={id} src={`https://images.unsplash.com/${id}?auto=format&fit=crop&w=80&h=80&q=75`} alt="" className="h-9 w-9 rounded-full border-2 border-alabaster object-cover" />)}
               </div>
-              <p className="text-xs leading-5 text-stone-500"><span className="font-semibold text-espresso">Индивидуальный подход</span><br />План лечения начинается с диалога</p>
+              <p className="text-xs leading-5 text-stone-500"><span className="font-semibold text-espresso">{copy.hero.approach}</span><br />{copy.hero.approachNote}</p>
             </div>
           </motion.div>
 
@@ -489,8 +496,8 @@ function App() {
               <div className="image-grain relative aspect-[.79] overflow-hidden rounded-t-[45%] rounded-b-[1.6rem] bg-ivory">
                 <img src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1000&q=90" alt="Светлый современный стоматологический кабинет" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />
                 <div className="absolute inset-x-4 bottom-5 z-10 text-white sm:inset-x-6 sm:bottom-7">
-                  <span className="text-[9px] uppercase tracking-[.2em] text-white/75">Ваш комфорт — в центре</span>
-                  <p className="mt-2 max-w-[240px] font-serif text-2xl leading-tight sm:text-3xl">Естественная красота в деталях</p>
+                  <span className="text-[9px] uppercase tracking-[.2em] text-white/75">{copy.hero.imageTag}</span>
+                  <p className="mt-2 max-w-[240px] font-serif text-2xl leading-tight sm:text-3xl">{copy.hero.imageTitle}</p>
                 </div>
               </div>
               <div className="flex flex-col gap-3 pt-12 sm:gap-4 sm:pt-16">
@@ -499,14 +506,14 @@ function App() {
                 </div>
                 <div className="flex flex-1 flex-col justify-center rounded-[1.25rem] bg-ivory p-3 sm:p-4">
                   <Sparkles size={20} strokeWidth={1.4} className="text-sage" />
-                  <p className="mt-3 font-serif text-xl leading-tight sm:text-2xl">Бережно.</p>
-                  <p className="mt-1 font-serif text-xl italic leading-tight text-sage sm:text-2xl">Продуманно.</p>
+                  <p className="mt-3 font-serif text-xl leading-tight sm:text-2xl">{copy.hero.gentle}</p>
+                  <p className="mt-1 font-serif text-xl italic leading-tight text-sage sm:text-2xl">{copy.hero.thoughtful}</p>
                 </div>
               </div>
             </div>
             <div className="absolute -bottom-5 left-2 flex items-center gap-3 rounded-2xl border border-stone-200/70 bg-white/95 p-3 shadow-soft backdrop-blur sm:bottom-5 sm:-left-8 sm:p-4">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ivory text-sage"><ShieldCheck size={19} /></span>
-              <div><p className="text-xs font-semibold">План лечения — для вас</p><p className="mt-1 text-[10px] text-stone-500">Обсуждаем каждый этап</p></div>
+              <div><p className="text-xs font-semibold">{copy.hero.plan}</p><p className="mt-1 text-[10px] text-stone-500">{copy.hero.planNote}</p></div>
             </div>
           </motion.div>
         </section>
@@ -514,26 +521,26 @@ function App() {
         <section id="cases" className="bg-ivory py-16 sm:py-24">
           <div className="section-wrap">
             <motion.div {...reveal} className="mb-9 flex flex-col justify-between gap-5 sm:mb-12 sm:flex-row sm:items-end">
-              <div><Eyebrow>Портфолио улыбок</Eyebrow><h2 className="max-w-2xl font-serif text-4xl leading-[1.06] tracking-[-.04em] sm:text-5xl lg:text-6xl">Маленькие детали.<br /><span className="italic text-sage">Большая разница.</span></h2></div>
-              <p className="max-w-xs text-sm leading-6 text-stone-500">Каждый случай уникален. Сравните изображения и узнайте больше о подходе к лечению.</p>
+              <div><Eyebrow>{copy.cases.eyebrow}</Eyebrow><h2 className="max-w-2xl font-serif text-4xl leading-[1.06] tracking-[-.04em] sm:text-5xl lg:text-6xl">{copy.cases.title}<br /><span className="italic text-sage">{copy.cases.titleAccent}</span></h2></div>
+              <p className="max-w-xs text-sm leading-6 text-stone-500">{copy.cases.description}</p>
             </motion.div>
             <motion.div variants={{ visible: { transition: { staggerChildren: .12 } } }} initial="hidden" whileInView="visible" viewport={{ once: true, amount: .1 }} className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {cases.map((item) => <BeforeAfterCard key={item.number} item={item} />)}
+              {localizedCases.map((item) => <BeforeAfterCard key={item.number} item={item} labels={copy.cases} />)}
             </motion.div>
-            <p className="mt-5 text-[11px] leading-5 text-stone-400">*Сроки и объём лечения определяются после очного осмотра. Представленные изображения — визуальные примеры дизайна, не подтверждённые клинические кейсы.</p>
+            <p className="mt-5 text-[11px] leading-5 text-stone-400">{copy.cases.legal}</p>
           </div>
         </section>
 
         <section id="services" className="section-wrap py-16 sm:py-24">
           <motion.div {...reveal} className="mb-9 sm:mb-12">
-            <Eyebrow>Чем я могу помочь</Eyebrow>
+            <Eyebrow>{copy.services.eyebrow}</Eyebrow>
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-              <h2 className="max-w-2xl font-serif text-4xl leading-[1.06] tracking-[-.04em] sm:text-5xl lg:text-6xl">Здоровье зубов —<br /><span className="italic text-sage">основа уверенности.</span></h2>
-              <p className="max-w-sm text-sm leading-6 text-stone-500">Современные методы, понятные рекомендации и план, который учитывает именно вашу ситуацию.</p>
+              <h2 className="max-w-2xl font-serif text-4xl leading-[1.06] tracking-[-.04em] sm:text-5xl lg:text-6xl">{copy.services.title}<br /><span className="italic text-sage">{copy.services.titleAccent}</span></h2>
+              <p className="max-w-sm text-sm leading-6 text-stone-500">{copy.services.description}</p>
             </div>
           </motion.div>
           <div className="grid gap-4 md:grid-cols-3">
-            {services.map(({ number, title, description, note, icon: Icon }, index) => (
+            {localizedServices.map(({ number, title, description, note, icon: Icon }, index) => (
               <motion.article key={number} {...reveal} transition={{ duration: .5, delay: index * .08 }} className="group flex min-h-[285px] flex-col rounded-[1.5rem] border border-stone-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-sage/30 hover:shadow-soft sm:p-7">
                 <div className="flex items-start justify-between">
                   <span className="font-serif text-sm text-stone-400">{number}</span>
@@ -556,12 +563,12 @@ function App() {
             <div className="absolute -right-4 -top-12 h-52 w-52 rounded-full border border-white/10 sm:right-12 sm:-top-24 sm:h-[300px] sm:w-[300px]" />
             <div className="relative grid gap-10 lg:grid-cols-[1fr_.75fr] lg:items-end">
               <div>
-                <Eyebrow light>В основе — доверие</Eyebrow>
-                <h2 className="max-w-2xl font-serif text-4xl leading-[1.06] tracking-[-.04em] sm:text-5xl lg:text-6xl">Не просто лечение.<br /><span className="italic text-[#C6D0BE]">Внимание к вам.</span></h2>
-                <p className="mt-5 max-w-lg text-sm leading-7 text-white/65">Объясняю варианты простым языком, отвечаю на вопросы и помогаю принимать решения без спешки. Ваш комфорт начинается с открытого разговора.</p>
+                <Eyebrow light>{copy.approach.eyebrow}</Eyebrow>
+                <h2 className="max-w-2xl font-serif text-4xl leading-[1.06] tracking-[-.04em] sm:text-5xl lg:text-6xl">{copy.approach.title}<br /><span className="italic text-[#C6D0BE]">{copy.approach.titleAccent}</span></h2>
+                <p className="mt-5 max-w-lg text-sm leading-7 text-white/65">{copy.approach.description}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {[['01', 'Диалог до лечения'], ['02', 'Понятный план'], ['03', 'Внимание к деталям'], ['04', 'Поддержка на этапах']].map(([n, label]) => <div key={n} className="rounded-2xl border border-white/15 bg-white/[.04] p-4 sm:p-5"><span className="text-[10px] tracking-[.16em] text-[#C6D0BE]">{n}</span><p className="mt-5 text-sm leading-5 text-white/90">{label}</p></div>)}
+                {copy.approach.steps.map((label, index) => { const n = String(index + 1).padStart(2, '0'); return <div key={n} className="rounded-2xl border border-white/15 bg-white/[.04] p-4 sm:p-5"><span className="text-[10px] tracking-[.16em] text-[#C6D0BE]">{n}</span><p className="mt-5 text-sm leading-5 text-white/90">{label}</p></div> })}
               </div>
             </div>
           </div>
@@ -570,20 +577,20 @@ function App() {
         <section id="contacts" className="bg-ivory py-16 sm:py-24">
           <div className="section-wrap grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:gap-20">
             <motion.div {...reveal}>
-              <Eyebrow>Первый шаг — простой</Eyebrow>
-              <h2 className="font-serif text-4xl leading-[1.05] tracking-[-.04em] sm:text-5xl lg:text-6xl">Давайте знакомиться <span className="italic text-sage">и улыбаться.</span></h2>
-              <p className="mt-5 max-w-md text-sm leading-7 text-stone-500">Оставьте контакты и выберите, что вас интересует. Мы подготовим сообщение для записи в WhatsApp.</p>
+              <Eyebrow>{copy.contacts.eyebrow}</Eyebrow>
+              <h2 className="font-serif text-4xl leading-[1.05] tracking-[-.04em] sm:text-5xl lg:text-6xl">{copy.contacts.title} <span className="italic text-sage">{copy.contacts.titleAccent}</span></h2>
+              <p className="mt-5 max-w-md text-sm leading-7 text-stone-500">{copy.contacts.description}</p>
               <div className="mt-8 space-y-4">
                 <a href={whatsappUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MessageCircle size={19} /></span>
-                  <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">Запись в WhatsApp</span><span className="mt-1 block text-xs text-stone-500">Напишите удобным для вас способом</span></span><ArrowRight size={16} className="text-stone-400" />
+                  <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{copy.contacts.whatsapp}</span><span className="mt-1 block text-xs text-stone-500">{copy.contacts.whatsappNote}</span></span><ArrowRight size={16} className="text-stone-400" />
                 </a>
                 <a href="https://www.instagram.com/drmonaabdullaeva/" target="_blank" rel="noreferrer" className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F0E8E0] text-[#8B725D]"><Instagram size={19} /></span>
                   <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">Instagram</span><span className="mt-1 block text-xs text-stone-500">@drmonaabdullaeva</span></span><MoveUpRight size={16} className="text-stone-400" />
                 </a>
               </div>
-              <a href="https://yandex.ru/maps/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж" target="_blank" rel="noreferrer" className="mt-5 flex items-start gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={18} /></span><span className="min-w-0 flex-1"><span className="block text-xs font-semibold uppercase tracking-[.14em] text-sage">Адрес приёма</span><span className="mt-1 block text-sm leading-6 text-espresso">Москва, ул. Барклая, д. 8<br />ТЦ «Старая Горбушка», 4-й этаж</span><span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500">Открыть в Яндекс Картах <MoveUpRight size={13} /></span></span></a>
+              <a href="https://yandex.ru/maps/?text=Москва%2C%20ул.%20Барклая%2C%20д.%208%2C%20ТЦ%20Старая%20Горбушка%2C%204-й%20этаж" target="_blank" rel="noreferrer" className="mt-5 flex items-start gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={18} /></span><span className="min-w-0 flex-1"><span className="block text-xs font-semibold uppercase tracking-[.14em] text-sage">Адрес приёма</span><span className="mt-1 block text-sm leading-6 text-espresso">{copy.contacts.address}<br />{copy.contacts.addressFloor}</span><span className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500">Открыть в Яндекс Картах <MoveUpRight size={13} /></span></span></a>
             </motion.div>
 
             <motion.div {...reveal} className="rounded-[1.75rem] border border-stone-200/80 bg-white p-5 shadow-[0_15px_50px_rgba(28,26,23,.04)] sm:p-8 lg:p-10">
@@ -593,30 +600,30 @@ function App() {
               </div>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="name" className="mb-2 block text-xs font-medium text-stone-600">Ваше имя</label>
+                  <label htmlFor="name" className="mb-2 block text-xs font-medium text-stone-600">{copy.form.name}</label>
                   <input id="name" name="name" autoComplete="name" required minLength={2} value={form.name} onChange={(e: ChangeEvent<HTMLInputElement>) => { setForm({ ...form, name: e.target.value }); setSubmitted(false) }} placeholder="Как к вам обращаться?" className="h-13 w-full rounded-xl border border-stone-200 bg-[#FCFCFA] px-4 py-3.5 text-sm outline-none transition placeholder:text-stone-400 focus:border-sage focus:bg-white" />
                 </div>
                 <div>
-                  <label htmlFor="phone" className="mb-2 block text-xs font-medium text-stone-600">Номер телефона</label>
+                  <label htmlFor="phone" className="mb-2 block text-xs font-medium text-stone-600">{copy.form.phone}</label>
                   <input id="phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" required minLength={7} value={form.phone} onChange={(e: ChangeEvent<HTMLInputElement>) => { setForm({ ...form, phone: e.target.value }); setSubmitted(false) }} placeholder="+7 (___) ___-__-__" className="w-full rounded-xl border border-stone-200 bg-[#FCFCFA] px-4 py-3.5 text-sm outline-none transition placeholder:text-stone-400 focus:border-sage focus:bg-white" />
                 </div>
                 <div>
-                  <label htmlFor="service" className="mb-2 block text-xs font-medium text-stone-600">Что вас интересует?</label>
+                  <label htmlFor="service" className="mb-2 block text-xs font-medium text-stone-600">{copy.form.serviceLabel}</label>
                   <div className="relative">
                     <select id="service" name="service" value={form.service} onChange={(e: ChangeEvent<HTMLSelectElement>) => { setForm({ ...form, service: e.target.value }); setSubmitted(false) }} className="w-full appearance-none rounded-xl border border-stone-200 bg-[#FCFCFA] px-4 py-3.5 pr-10 text-sm text-espresso outline-none transition focus:border-sage focus:bg-white">
-                      <option>Бесплатная диагностика</option><option>Эстетическое восстановление</option><option>Лечение зубов</option><option>Ортодонтия / брекеты</option><option>Другая услуга</option>
+                      {copy.form.serviceOptions.map((option) => <option key={option}>{option}</option>)}
                     </select>
                     <ChevronDown size={16} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-stone-400" />
                   </div>
                 </div>
                 <label className="flex cursor-pointer items-start gap-3 text-[11px] leading-5 text-stone-500">
                   <input type="checkbox" required className="mt-1 h-3.5 w-3.5 shrink-0 accent-[#5B6B54]" />
-                  <span>Я согласен(на) на обработку персональных данных для связи по заявке и ознакомлен(а) с <a href="#privacy-note" className="underline underline-offset-2 hover:text-sage">условиями конфиденциальности</a>.</span>
+                  <span>{copy.form.consent} <a href="#privacy-note" className="underline underline-offset-2 hover:text-sage">{copy.form.privacy}</a>.</span>
                 </label>
                 <button type="submit" className="group flex min-h-[54px] w-full items-center justify-center gap-3 rounded-full bg-sage px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-sage-dark active:translate-y-0">
-                  {submitted ? <><Check size={17} /> Сообщение подготовлено</> : <>Записаться на приём <ArrowRight size={16} className="transition group-hover:translate-x-1" /></>}
+                  {submitted ? <><Check size={17} /> {copy.form.submitted}</> : <>{copy.form.submit} <ArrowRight size={16} className="transition group-hover:translate-x-1" /></>}
                 </button>
-                <p id="privacy-note" className="text-center text-[10px] leading-5 text-stone-400">После нажатия откроется WhatsApp с подготовленным сообщением. Данные не отправляются на сервер этого сайта.</p>
+                <p id="privacy-note" className="text-center text-[10px] leading-5 text-stone-400">{copy.form.note}</p>
               </form>
             </motion.div>
           </div>
@@ -624,30 +631,30 @@ function App() {
             <div className="overflow-hidden rounded-[2rem] border border-stone-200/80 bg-white shadow-[0_18px_60px_rgba(28,26,23,.06)]">
               <div className="grid lg:grid-cols-[.82fr_1.18fr]">
                 <div className="flex flex-col justify-center p-6 sm:p-9 lg:p-11">
-                  <Eyebrow>Как нас найти</Eyebrow>
-                  <h3 className="max-w-md font-serif text-4xl leading-[1.04] tracking-[-.045em] sm:text-5xl">Будем рады <span className="italic text-sage">вас видеть.</span></h3>
-                  <p className="mt-4 max-w-sm text-sm leading-7 text-stone-500">Приходите на консультацию — поможем подобрать бережный и понятный план заботы о вашей улыбке.</p>
+                  <Eyebrow>{copy.contacts.findUs}</Eyebrow>
+                  <h3 className="max-w-md font-serif text-4xl leading-[1.04] tracking-[-.045em] sm:text-5xl">{copy.contacts.findTitle} <span className="italic text-sage">{copy.contacts.findAccent}</span></h3>
+                  <p className="mt-4 max-w-sm text-sm leading-7 text-stone-500">{copy.contacts.findDescription}</p>
 
                   <div className="mt-7 flex items-start gap-4 border-t border-stone-100 pt-6">
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MapPin size={19} /></span>
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">Адрес клиники</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">{copy.contacts.addressLabel}</p>
                       <p className="mt-2 text-sm leading-6 text-espresso">Москва, ул. Барклая, д. 8<br />ТЦ «Старая Горбушка», 4-й этаж</p>
-                      <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500 underline decoration-stone-300 underline-offset-4 transition hover:text-sage">Открыть адрес в Яндекс Картах <MoveUpRight size={12} /></a>
+                      <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-stone-500 underline decoration-stone-300 underline-offset-4 transition hover:text-sage">{copy.contacts.openMaps} <MoveUpRight size={12} /></a>
                     </div>
                   </div>
 
                   <div className="mt-5 flex items-start gap-4 border-t border-stone-100 pt-5">
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F0E8E0] text-[#8B725D]"><MessageCircle size={18} /></span>
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">Связаться с нами</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-sage">{copy.contacts.contactLabel}</p>
                       <a href="tel:+79966551719" className="mt-2 inline-flex text-base font-medium tracking-wide text-espresso transition hover:text-sage">+7 (996) 655-17-19</a>
-                      <p className="mt-1 text-xs text-stone-500">Запись и вопросы по WhatsApp</p>
+                      <p className="mt-1 text-xs text-stone-500">{copy.contacts.phoneNote}</p>
                     </div>
                   </div>
 
                   <a href={CLINIC_ROUTE_URL} target="_blank" rel="noreferrer" className="mt-7 inline-flex min-h-[52px] items-center justify-center gap-3 self-start rounded-full bg-sage px-6 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,107,84,.18)] transition hover:-translate-y-0.5 hover:bg-sage-dark">
-                    Проложить маршрут <ArrowRight size={15} />
+                    {copy.contacts.route} <ArrowRight size={15} />
                   </a>
                 </div>
                 <div className="relative min-h-[300px] bg-[#ECEFE8] lg:min-h-[520px]">
@@ -664,21 +671,21 @@ function App() {
         <div className="section-wrap">
           <div className="flex flex-col gap-7 border-b border-stone-200 py-8 sm:flex-row sm:items-center sm:justify-between">
             <a href="#home" className="flex flex-col leading-none"><span className="font-serif text-lg tracking-[.09em]">DR. MONA</span><span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500">ABDULLAEVA</span></a>
-            <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#home" className="hover:text-sage">Главная</a><a href="#services" className="hover:text-sage">Услуги</a><a href="#cases" className="hover:text-sage">Кейсы</a><a href="#approach" className="hover:text-sage">Подход</a><a href="#contacts" className="hover:text-sage">Контакты</a></nav>
+            <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#home" className="hover:text-sage">{copy.footer.home}</a><a href="#services" className="hover:text-sage">{copy.footer.services}</a><a href="#cases" className="hover:text-sage">{copy.footer.cases}</a><a href="#approach" className="hover:text-sage">{copy.footer.approach}</a><a href="#contacts" className="hover:text-sage">{copy.footer.contacts}</a></nav>
             <div className="flex gap-2">
               <a href="https://www.instagram.com/drmonaabdullaeva/" target="_blank" rel="noreferrer" aria-label="Instagram доктора Моны" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><Instagram size={16} /></a>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Запись в WhatsApp" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><MessageCircle size={16} /></a>
             </div>
           </div>
           <div className="flex flex-col gap-3 py-5 text-[10px] leading-5 text-stone-400 sm:flex-row sm:items-start sm:justify-between">
-            <p>© {new Date().getFullYear()} Dr. Mona Abdullaeva. Все права защищены.</p>
-            <p className="max-w-2xl sm:text-right">Информация на сайте не является медицинской рекомендацией и не заменяет консультацию специалиста. План лечения, показания, стоимость и сроки определяются врачом после очного осмотра. Изображения в портфолио — демонстрационные и не подтверждают реальные результаты лечения.</p>
+            <p>© {new Date().getFullYear()} Dr. Mona Abdullaeva. {copy.footer.copyright}</p>
+            <p className="max-w-2xl sm:text-right">{copy.footer.medical}</p>
           </div>
         </div>
       </footer>
 
       <a href={whatsappUrl} target="_blank" rel="noreferrer" className="fixed bottom-4 right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-sage px-5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(37,54,34,.28)] transition hover:-translate-y-1 hover:bg-sage-dark sm:bottom-6 sm:right-6" aria-label="Записаться в WhatsApp">
-        <MessageCircle size={19} /><span>Записаться</span>
+        <MessageCircle size={19} /><span>{copy.nav.book}</span>
       </a>
     </div>
   )
