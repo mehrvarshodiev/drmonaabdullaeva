@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent, MouseEvent, ReactNode } from 'react'
 import type { Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
@@ -197,6 +197,8 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [headerVisible, setHeaderVisible] = useState(true)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const programmaticNavigationRef = useRef(false)
+  const navigationResetTimerRef = useRef<number | null>(null)
   const [form, setForm] = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
   const [submitted, setSubmitted] = useState(false)
   const reduceMotion = useReducedMotion()
@@ -210,7 +212,7 @@ function App() {
       const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(scrollableHeight > 0 ? Math.min(1, Math.max(0, currentY / scrollableHeight)) : 0)
 
-      if (currentY <= 24) {
+      if (programmaticNavigationRef.current || currentY <= 24) {
         setHeaderVisible(true)
       } else if (menuOpen || currentY < previousY - 2) {
         setHeaderVisible(true)
@@ -268,37 +270,12 @@ function App() {
   }
 
   const closeMenu = () => setMenuOpen(false)
-  const scrollToTop = (event: MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault()
-    closeMenu()
-    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-  }
-
-  const handleSectionNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
-    const href = event.currentTarget.getAttribute('href')
-    if (!href || !href.startsWith('#') || href === '#') return
-    let section: HTMLElement | null = null
-    try {
-      section = document.getElementById(decodeURIComponent(href.slice(1)))
-    } catch {
-      return
-    }
-    if (!section) return
-    event.preventDefault()
-    closeMenu()
-    setHeaderVisible(true)
-    if (window.location.hash !== href) window.history.replaceState(null, '', href)
-    // Wait for the mobile menu to collapse before measuring/scrolling to the target.
-    window.requestAnimationFrame(() => {
-      section?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
-    })
-  }
 
   return (
     <div
       className="min-h-screen bg-alabaster text-espresso"
       onClick={(event) => {
-        // A single fallback for every in-page anchor, including links added outside the main nav.
+        // One navigation path for every same-page anchor across desktop, mobile, and footer.
         if (event.defaultPrevented) return
         const target = event.target
         if (!(target instanceof Element)) return
@@ -306,6 +283,7 @@ function App() {
         if (!(anchor instanceof HTMLAnchorElement)) return
         const href = anchor.getAttribute('href')
         if (!href || href === '#') return
+
         let section: HTMLElement | null = null
         try {
           section = document.getElementById(decodeURIComponent(href.slice(1)))
@@ -313,13 +291,35 @@ function App() {
           return
         }
         if (!section) return
+
         event.preventDefault()
+        const menuWasOpen = menuOpen
         setMenuOpen(false)
         setHeaderVisible(true)
+        programmaticNavigationRef.current = true
+        if (navigationResetTimerRef.current !== null) {
+          window.clearTimeout(navigationResetTimerRef.current)
+        }
         if (window.location.hash !== href) window.history.replaceState(null, '', href)
-        window.requestAnimationFrame(() => {
-          section?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
-        })
+
+        const scrollToTarget = () => {
+          const top = href === '#home'
+            ? 0
+            : Math.max(0, section!.getBoundingClientRect().top + window.scrollY - 104)
+          window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' })
+          navigationResetTimerRef.current = window.setTimeout(() => {
+            programmaticNavigationRef.current = false
+            navigationResetTimerRef.current = null
+          }, 1800)
+        }
+
+        // Wait until the mobile menu's exit animation has finished so its height
+        // cannot shift the destination while the browser is scrolling.
+        if (menuWasOpen) {
+          window.setTimeout(scrollToTarget, 320)
+        } else {
+          window.requestAnimationFrame(scrollToTarget)
+        }
       }}
     >
       <div
@@ -341,17 +341,17 @@ function App() {
         style={{ willChange: 'transform' }}
       >
         <div className="section-wrap flex h-[72px] items-center justify-between gap-4">
-          <a href="#home" onClick={scrollToTop} className="group flex shrink-0 flex-col leading-none" aria-label="Dr. Mona Abdullaeva — на главную">
+          <a href="#home" className="group flex shrink-0 flex-col leading-none" aria-label="Dr. Mona Abdullaeva — на главную">
             <span className="font-serif text-[17px] tracking-[.09em] sm:text-[19px]">DR. MONA</span>
             <span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500 sm:text-[9px]">ABDULLAEVA</span>
           </a>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Основная навигация">
             <a className="text-xs text-stone-600 transition hover:text-sage" href="#home" onClick={scrollToTop}>Главная</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#services" onClick={handleSectionNavigation}>Услуги</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#cases" onClick={handleSectionNavigation}>Кейсы</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#approach" onClick={handleSectionNavigation}>Подход</a>
-            <a className="text-xs text-stone-600 transition hover:text-sage" href="#contacts" onClick={handleSectionNavigation}>Контакты</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#services">Услуги</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#cases">Кейсы</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#approach">Подход</a>
+            <a className="text-xs text-stone-600 transition hover:text-sage" href="#contacts">Контакты</a>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -374,7 +374,7 @@ function App() {
                   ['Подход', '#approach'],
                   ['Контакты', '#contacts'],
                 ].map(([label, href]) => (
-                  <a key={href} href={href} onClick={href === '#home' ? scrollToTop : handleSectionNavigation} className="border-b border-stone-100 py-4 text-sm">{label}</a>
+                  <a key={href} href={href}  className="border-b border-stone-100 py-4 text-sm">{label}</a>
                 ))}
                 <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={closeMenu} className="my-4 flex items-center justify-center gap-2 rounded-full bg-sage py-3.5 text-sm font-semibold text-white"><MessageCircle size={16} /> Записаться в WhatsApp</a>
               </div>
@@ -539,7 +539,7 @@ function App() {
                 </div>
                 <label className="flex cursor-pointer items-start gap-3 text-[11px] leading-5 text-stone-500">
                   <input type="checkbox" required className="mt-1 h-3.5 w-3.5 shrink-0 accent-[#5B6B54]" />
-                  <span>Я согласен(на) на обработку персональных данных для связи по заявке и ознакомлен(а) с <a href="#privacy-note" onClick={handleSectionNavigation} className="underline underline-offset-2 hover:text-sage">условиями конфиденциальности</a>.</span>
+                  <span>Я согласен(на) на обработку персональных данных для связи по заявке и ознакомлен(а) с <a href="#privacy-note" className="underline underline-offset-2 hover:text-sage">условиями конфиденциальности</a>.</span>
                 </label>
                 <button type="submit" className="group flex min-h-[54px] w-full items-center justify-center gap-3 rounded-full bg-sage px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-sage-dark active:translate-y-0">
                   {submitted ? <><Check size={17} /> Сообщение подготовлено</> : <>Записаться на приём <ArrowRight size={16} className="transition group-hover:translate-x-1" /></>}
