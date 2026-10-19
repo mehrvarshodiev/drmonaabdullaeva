@@ -95,9 +95,9 @@ function BeforeAfterCard({ item, labels }: { item: DentalCase; labels: Messages[
       className="group overflow-hidden rounded-[1.5rem] border border-stone-200/80 bg-white transition duration-500 hover:-translate-y-1 hover:shadow-soft"
     >
       <div className="relative aspect-[4/4.3] overflow-hidden bg-ivory">
-        <img src={item.before} alt={`Иллюстративное изображение до процедуры: ${item.title}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <img src={item.before} alt={`${labels.beforeAlt}: ${item.title}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
         <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
-          <img src={item.after} alt={`Иллюстративное изображение результата: ${item.title}`} className="h-full w-full object-cover" loading="lazy" />
+          <img src={item.after} alt={`${labels.afterAlt}: ${item.title}`} className="h-full w-full object-cover" loading="lazy" />
         </div>
         <div className="absolute inset-y-0 z-10 w-px bg-white shadow-[0_0_0_1px_rgba(28,26,23,.12)]" style={{ left: `${position}%` }}>
           <span className="absolute left-1/2 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-white/95 text-espresso shadow-md">
@@ -182,7 +182,7 @@ const YandexMap = memo(function YandexMap({ labels }: { labels: Messages['contac
           <button type="button" onClick={() => setBalloonOpen(false)} aria-label={labels.mapClose} className="absolute right-3 top-3 text-stone-400 hover:text-espresso"><X size={15} /></button>
           <p className="pr-4 font-serif text-lg leading-tight text-espresso">Dr. Mona Abdullaeva</p>
           <p className="mt-1 text-xs leading-5 text-stone-500">{labels.mapTitle}</p>
-          <p className="mt-2 text-[11px] leading-4 text-sage">ТЦ «Старая Горбушка» · 4-й этаж</p>
+          <p className="mt-2 text-[11px] leading-4 text-sage">{labels.addressFloor}</p>
           <a href={CLINIC_MAP_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-espresso underline decoration-stone-300 underline-offset-4">{labels.openMaps} <MoveUpRight size={12} /></a>
         </div>
       )}
