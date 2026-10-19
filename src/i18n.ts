@@ -7,12 +7,12 @@ import kz from './locales/kz.json'
 export const locales = ['ru', 'tg', 'kg', 'uz', 'kz'] as const
 export type Locale = (typeof locales)[number]
 
-export const localeMeta: Record<Locale, { code: string; flag: string; nativeName: string; htmlLang: string }> = {
-  ru: { code: 'RU', flag: '🇷🇺', nativeName: 'Русский', htmlLang: 'ru' },
-  tg: { code: 'TG', flag: '🇹🇯', nativeName: 'Тоҷикӣ', htmlLang: 'tg' },
-  kg: { code: 'KG', flag: '🇰🇬', nativeName: 'Кыргызча', htmlLang: 'ky' },
-  uz: { code: 'UZ', flag: '🇺🇿', nativeName: 'O‘zbekcha', htmlLang: 'uz' },
-  kz: { code: 'KZ', flag: '🇰🇿', nativeName: 'Қазақша', htmlLang: 'kk' },
+export const localeMeta: Record<Locale, { code: string; flag: string; nativeName: string; htmlLang: string; label: string }> = {
+  ru: { code: 'RU', flag: '🇷🇺', nativeName: 'Русский', htmlLang: 'ru', label: 'Язык сайта' },
+  tg: { code: 'TG', flag: '🇹🇯', nativeName: 'Тоҷикӣ', htmlLang: 'tg', label: 'Забони сомона' },
+  kg: { code: 'KG', flag: '🇰🇬', nativeName: 'Кыргызча', htmlLang: 'ky', label: 'Сайттын тили' },
+  uz: { code: 'UZ', flag: '🇺🇿', nativeName: 'O‘zbekcha', htmlLang: 'uz', label: 'Sayt tili' },
+  kz: { code: 'KZ', flag: '🇰🇿', nativeName: 'Қазақша', htmlLang: 'kk', label: 'Сайт тілі' },
 }
 
 export const messages = { ru, tg, kg, uz, kz } as const
