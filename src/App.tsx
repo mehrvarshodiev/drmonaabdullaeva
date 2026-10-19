@@ -107,7 +107,7 @@ function BeforeAfterCard({ item }: { item: DentalCase }) {
         <div className="absolute left-3 top-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.15em] text-espresso backdrop-blur">До</div>
         <div className="absolute right-3 top-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.15em] text-espresso backdrop-blur">После</div>
         <input
-          aria-label={`Сравнить до и после: ${item.title}`}
+          aria-label={`${labels.before} / ${labels.after}: ${item.title}`}
           type="range" min="0" max="100" value={position}
           onChange={(event: ChangeEvent<HTMLInputElement>) => setPosition(Number(event.target.value))}
           className="absolute inset-x-0 bottom-0 z-30 h-full w-full cursor-ew-resize opacity-0"
@@ -206,16 +206,43 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const programmaticNavigationRef = useRef(false)
   const navigationResetTimerRef = useRef<number | null>(null)
-  const [form, setForm] = useState<{ name: string; phone: string; service: string }>({ name: '', phone: '', service: 'Бесплатная диагностика' })
+  const [form, setForm] = useState<{ name: string; phone: string; service: string }>(() => ({ name: '', phone: '', service: messages[getInitialLocale()].form.serviceOptions[0] }))
   const [submitted, setSubmitted] = useState(false)
   const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     const root = document.documentElement
+    root.lang = localeMeta[locale].htmlLang
+    document.title = copy.meta.title
+    const description = document.querySelector<HTMLMetaElement>('meta[name="description"]')
+    if (description) description.content = copy.meta.description
+    try { window.localStorage.setItem('dr-mona-locale', locale) } catch { /* Locale still applies for this session. */ }
+    const expectedPath = localizedPath(locale)
+    if (window.location.pathname + window.location.search + window.location.hash !== expectedPath) {
+      window.history.replaceState(null, '', expectedPath)
+    }
     root.dataset.theme = theme
     root.classList.toggle('dark', theme === 'dark')
     root.style.colorScheme = theme
-  }, [theme])
+  }, [theme, locale, copy.meta.description, copy.meta.title])
+
+  useEffect(() => {
+    const handleLocalePopState = () => {
+      const pathLocale = localeFromPath(window.location.pathname)
+      setLocale(pathLocale || 'ru')
+    }
+    window.addEventListener('popstate', handleLocalePopState)
+    return () => window.removeEventListener('popstate', handleLocalePopState)
+  }, [])
+
+  const changeLocale = (nextLocale: Locale) => {
+    const serviceIndex = messages[locale].form.serviceOptions.indexOf(form.service)
+    try { window.localStorage.setItem('dr-mona-locale', nextLocale) } catch { /* Locale still applies for this session. */ }
+    window.history.pushState(null, '', localizedPath(nextLocale))
+    setLocale(nextLocale)
+    setForm((current) => ({ ...current, service: messages[nextLocale].form.serviceOptions[serviceIndex >= 0 ? serviceIndex : 0] }))
+    setMenuOpen(false)
+  }
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-color-scheme: dark)')
@@ -399,8 +426,9 @@ function App() {
             >
               {theme === 'dark' ? <Sun size={17} strokeWidth={1.8} /> : <Moon size={17} strokeWidth={1.8} />}
             </button>
+            <div className="hidden lg:block"><LanguageSwitcher locale={locale} onChange={changeLocale} /></div>
             <a href={whatsappUrl} target="_blank" rel="noreferrer" className="hidden items-center gap-2 rounded-full bg-sage px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-sage-dark sm:inline-flex">
-              <MessageCircle size={14} /> Записаться <ArrowRight size={13} />
+              <MessageCircle size={14} /> {copy.nav.book} <ArrowRight size={13} />
             </a>
             <button className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 lg:hidden" aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -412,11 +440,11 @@ function App() {
             <motion.nav initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-stone-200 bg-alabaster lg:hidden">
               <div className="section-wrap flex flex-col py-3">
                 {[
-                  ['Главная', '#home'],
-                  ['Услуги', '#services'],
-                  ['Кейсы до/после', '#cases'],
-                  ['Подход', '#approach'],
-                  ['Контакты', '#contacts'],
+                  [copy.nav.home, '#home'],
+                  [copy.nav.services, '#services'],
+                  [copy.nav.cases, '#cases'],
+                  [copy.nav.approach, '#approach'],
+                  [copy.nav.contacts, '#contacts'],
                 ].map(([label, href]) => (
                   <a key={href} href={href}  className="border-b border-stone-100 py-4 text-sm">{label}</a>
                 ))}
