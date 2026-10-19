@@ -33,7 +33,9 @@
     "gentle": "Ehtiyotkorlik bilan.",
     "thoughtful": "Puxta.",
     "plan": "Siz uchun davolash rejasi",
-    "planNote": "Har bir bosqichni muhokama qilamiz"
+    "planNote": "Har bir bosqichni muhokama qilamiz",
+    "clinicAlt": "Yorug‘ zamonaviy stomatologiya xonasi",
+    "demoAlt": "Estetik stomatologiyaning namunaviy surati"
   },
   "cases": {
     "eyebrow": "Tabassumlar portfeli",
@@ -149,7 +151,10 @@
     "submit": "Qabulga yozilish",
     "submitted": "Xabar tayyorlandi",
     "note": "Bosgandan so‘ng tayyor xabar bilan WhatsApp ochiladi. Ma’lumotlar ushbu sayt serveriga yuborilmaydi.",
-    "success": "Assalomu alaykum! Doktor Mona Abdullaeva qabuliga yozilmoqchiman."
+    "success": "Assalomu alaykum! Doktor Mona Abdullaeva qabuliga yozilmoqchiman.",
+    "title": "Qabulga yozilish",
+    "subtitle": "O‘zingiz haqingizda ayting",
+    "namePlaceholder": "Sizga qanday murojaat qilaylik?"
   },
   "footer": {
     "home": "Bosh sahifa",
@@ -177,6 +182,7 @@
     "themeDark": "Qorong‘i mavzuni yoqish",
     "themeLightTitle": "Yorug‘ mavzu",
     "themeDarkTitle": "Qorong‘i mavzu",
-    "privacyTitle": "Maxfiylik shartlari"
+    "privacyTitle": "Maxfiylik shartlari",
+    "scrollProgress": "Sahifani aylantirish ko‘rsatkichi"
   }
 }
