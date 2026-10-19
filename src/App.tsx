@@ -10,9 +10,7 @@ import {
   MapPin, Menu, MessageCircle, Moon, MoveUpRight, ShieldCheck, Sparkles, Sun, X
 } from 'lucide-react'
 
-const whatsappMessage = 'Здравствуйте, хочу записаться на бесплатную диагностику к доктору Моне Абдуллаевой.'
 const whatsappPhone = '79966551719'
-const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`
 
 type DentalCase = { number: string; title: string; subtitle: string; time: string; complexity: string; before: string; after: string; tag: string }
 type DentalService = { number: string; title: string; description: string; note: string; icon: LucideIcon }
@@ -215,6 +213,7 @@ function App() {
   const copy = messages[locale]
   const localizedCases = cases.map((item, index) => ({ ...item, ...copy.cases.items[index] }))
   const localizedServices = services.map((item, index) => ({ ...item, ...copy.services.items[index] }))
+  const localizedWhatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(copy.form.success)}`
 
   useEffect(() => {
     const root = document.documentElement
@@ -408,7 +407,7 @@ function App() {
         style={{ willChange: 'transform' }}
       >
         <div className="section-wrap flex h-[72px] items-center justify-between gap-4">
-          <a href="#home" className="group flex shrink-0 flex-col leading-none" aria-label="Dr. Mona Abdullaeva — на главную">
+          <a href="#home" className="group flex shrink-0 flex-col leading-none" aria-label={copy.common.homeAria}>
             <span className="font-serif text-[17px] tracking-[.09em] sm:text-[19px]">DR. MONA</span>
             <span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500 sm:text-[9px]">ABDULLAEVA</span>
           </a>
@@ -433,7 +432,7 @@ function App() {
               {theme === 'dark' ? <Sun size={17} strokeWidth={1.8} /> : <Moon size={17} strokeWidth={1.8} />}
             </button>
             <div className="hidden lg:block"><LanguageSwitcher locale={locale} onChange={changeLocale} /></div>
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className="hidden items-center gap-2 rounded-full bg-sage px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-sage-dark sm:inline-flex">
+            <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" className="hidden items-center gap-2 rounded-full bg-sage px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-sage-dark sm:inline-flex">
               <MessageCircle size={14} /> {copy.nav.book} <ArrowRight size={13} />
             </a>
             <button className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 lg:hidden" aria-label={menuOpen ? copy.nav.menuClose : copy.nav.menuOpen} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
@@ -455,7 +454,7 @@ function App() {
                   <a key={href} href={href}  className="border-b border-stone-100 py-4 text-sm">{label}</a>
                 ))}
                 <LanguageSwitcher locale={locale} onChange={changeLocale} mobile />
-                <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={closeMenu} className="my-4 flex items-center justify-center gap-2 rounded-full bg-sage py-3.5 text-sm font-semibold text-white"><MessageCircle size={16} /> {copy.nav.bookWhatsApp}</a>
+                <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" onClick={closeMenu} className="my-4 flex items-center justify-center gap-2 rounded-full bg-sage py-3.5 text-sm font-semibold text-white"><MessageCircle size={16} /> {copy.nav.bookWhatsApp}</a>
               </div>
             </motion.nav>
           )}
@@ -581,7 +580,7 @@ function App() {
               <h2 className="font-serif text-4xl leading-[1.05] tracking-[-.04em] sm:text-5xl lg:text-6xl">{copy.contacts.title} <span className="italic text-sage">{copy.contacts.titleAccent}</span></h2>
               <p className="mt-5 max-w-md text-sm leading-7 text-stone-500">{copy.contacts.description}</p>
               <div className="mt-8 space-y-4">
-                <a href={whatsappUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40">
+                <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-sage/40">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E9EEE5] text-sage"><MessageCircle size={19} /></span>
                   <span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{copy.contacts.whatsapp}</span><span className="mt-1 block text-xs text-stone-500">{copy.contacts.whatsappNote}</span></span><ArrowRight size={16} className="text-stone-400" />
                 </a>
@@ -658,7 +657,7 @@ function App() {
                   </a>
                 </div>
                 <div className="relative min-h-[300px] bg-[#ECEFE8] lg:min-h-[520px]">
-                  <YandexMap />
+                  <YandexMap labels={copy.contacts} />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/25 to-transparent" />
                 </div>
               </div>
@@ -673,8 +672,8 @@ function App() {
             <a href="#home" className="flex flex-col leading-none"><span className="font-serif text-lg tracking-[.09em]">DR. MONA</span><span className="mt-1.5 text-[8px] font-semibold tracking-[.24em] text-stone-500">ABDULLAEVA</span></a>
             <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs text-stone-500"><a href="#home" className="hover:text-sage">{copy.footer.home}</a><a href="#services" className="hover:text-sage">{copy.footer.services}</a><a href="#cases" className="hover:text-sage">{copy.footer.cases}</a><a href="#approach" className="hover:text-sage">{copy.footer.approach}</a><a href="#contacts" className="hover:text-sage">{copy.footer.contacts}</a></nav>
             <div className="flex gap-2">
-              <a href="https://www.instagram.com/drmonaabdullaeva/" target="_blank" rel="noreferrer" aria-label="Instagram доктора Моны" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><Instagram size={16} /></a>
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Запись в WhatsApp" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><MessageCircle size={16} /></a>
+              <a href="https://www.instagram.com/drmonaabdullaeva/" target="_blank" rel="noreferrer" aria-label={copy.contacts.instagram} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><Instagram size={16} /></a>
+              <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" aria-label={copy.nav.bookWhatsApp} className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition hover:border-sage hover:text-sage"><MessageCircle size={16} /></a>
             </div>
           </div>
           <div className="flex flex-col gap-3 py-5 text-[10px] leading-5 text-stone-400 sm:flex-row sm:items-start sm:justify-between">
@@ -684,7 +683,7 @@ function App() {
         </div>
       </footer>
 
-      <a href={whatsappUrl} target="_blank" rel="noreferrer" className="fixed bottom-4 right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-sage px-5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(37,54,34,.28)] transition hover:-translate-y-1 hover:bg-sage-dark sm:bottom-6 sm:right-6" aria-label="Записаться в WhatsApp">
+      <a href={localizedWhatsappUrl} target="_blank" rel="noreferrer" className="fixed bottom-4 right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-sage px-5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(37,54,34,.28)] transition hover:-translate-y-1 hover:bg-sage-dark sm:bottom-6 sm:right-6" aria-label="Записаться в WhatsApp">
         <MessageCircle size={19} /><span>{copy.nav.book}</span>
       </a>
     </div>
