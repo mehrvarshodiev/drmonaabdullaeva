@@ -71,7 +71,9 @@
         "complexity": "Ko‘rikdan so‘ng",
         "tag": "TERAPIYA"
       }
-    ]
+    ],
+    "beforeAlt": "Muolajadan oldingi namunaviy tasvir",
+    "afterAlt": "Natijaning namunaviy tasviri"
   },
   "services": {
     "eyebrow": "Qanday yordam bera olaman",
