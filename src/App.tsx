@@ -226,6 +226,33 @@ function App() {
     if (window.location.pathname + window.location.search + window.location.hash !== expectedPath) {
       window.history.replaceState(null, '', expectedPath)
     }
+    const canonicalUrl = window.location.origin + localizedPath(locale)
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.rel = 'canonical'
+      document.head.appendChild(canonical)
+    }
+    canonical.href = canonicalUrl
+    const alternateLocales: Array<[Locale, string]> = [['ru', 'ru'], ['tg', 'tg'], ['kg', 'ky'], ['uz', 'uz'], ['kz', 'kk']]
+    alternateLocales.forEach(([alternateLocale, languageTag]) => {
+      let alternate = document.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${languageTag}"]`)
+      if (!alternate) {
+        alternate = document.createElement('link')
+        alternate.rel = 'alternate'
+        alternate.hreflang = languageTag
+        document.head.appendChild(alternate)
+      }
+      alternate.href = window.location.origin + localizedPath(alternateLocale)
+    })
+    let defaultAlternate = document.querySelector<HTMLLinkElement>('link[rel="alternate"][hreflang="x-default"]')
+    if (!defaultAlternate) {
+      defaultAlternate = document.createElement('link')
+      defaultAlternate.rel = 'alternate'
+      defaultAlternate.hreflang = 'x-default'
+      document.head.appendChild(defaultAlternate)
+    }
+    defaultAlternate.href = window.location.origin + localizedPath('ru')
     root.dataset.theme = theme
     root.classList.toggle('dark', theme === 'dark')
     root.style.colorScheme = theme
