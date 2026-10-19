@@ -1,0 +1,159 @@
+{
+  "language": "O‘zbekcha",
+  "meta": {
+    "title": "Dr. Mona Abdullaeva — Estetik stomatologiya",
+    "description": "Moskvada estetik stomatologiya va ortodontiya. Birinchi qabulda bepul diagnostika va rentgen."
+  },
+  "nav": {
+    "home": "Bosh sahifa",
+    "services": "Xizmatlar",
+    "cases": "Oldin/keyin",
+    "approach": "Shifokor haqida",
+    "contacts": "Aloqa",
+    "book": "Yozilish",
+    "bookWhatsApp": "WhatsApp orqali yozilish",
+    "menuOpen": "Menyuni ochish",
+    "menuClose": "Menyuni yopish",
+    "main": "Asosiy navigatsiya"
+  },
+  "topline": "Estetik stomatologiya · Moskva · Har bir tafsilotga e’tibor",
+  "hero": {
+    "eyebrow": "Sizni aks ettiradigan tabassum",
+    "title": "Sizning ideal tabassumingiz",
+    "titleAccent": "shu yerdan boshlanadi.",
+    "description": "Har bir tafsilotga e’tibor bilan estetik stomatologiya va ortodontiya. Kariesni davolash, estetik restavratsiya va breketlar — qulayligingiz uchun g‘amxo‘rlik bilan.",
+    "offer": "Bepul diagnostika va rentgen",
+    "offerNote": "Birinchi qabulda — oldindan yozilish va ko‘rsatmalar mavjud bo‘lsa.",
+    "cta": "Bepul ko‘rikka yoziling",
+    "works": "Ishlarni ko‘rish",
+    "approach": "Individual yondashuv",
+    "approachNote": "Davolash rejasi suhbatdan boshlanadi",
+    "imageTag": "Sizning qulayligingiz — markazda",
+    "imageTitle": "Tafsilotlardagi tabiiy go‘zallik",
+    "gentle": "Ehtiyotkorlik bilan.",
+    "thoughtful": "Puxta.",
+    "plan": "Siz uchun davolash rejasi",
+    "planNote": "Har bir bosqichni muhokama qilamiz"
+  },
+  "cases": {
+    "eyebrow": "Tabassumlar portfeli",
+    "title": "Kichik tafsilotlar.",
+    "titleAccent": "Katta farq.",
+    "description": "Har bir holat o‘ziga xos. Rasmlarni solishtiring va davolash yondashuvi haqida bilib oling.",
+    "before": "Oldin",
+    "after": "Keyin",
+    "slider": "Slayderni suring",
+    "case": "HOLAT",
+    "complexity": "Murakkablik",
+    "disclaimer": "Rasmlar namuna sifatida berilgan. Haqiqiy natijalar individual.",
+    "legal": "*Davolash muddati va hajmi ko‘rikdan so‘ng belgilanadi. Rasmlar vizual misollar, tasdiqlangan klinik holatlar emas."
+  },
+  "services": {
+    "eyebrow": "Qanday yordam bera olaman",
+    "title": "Tishlar salomatligi —",
+    "titleAccent": "ishonch asosi.",
+    "description": "Zamonaviy usullar, tushunarli tavsiyalar va aynan sizning holatingizni hisobga oladigan reja.",
+    "items": [
+      {
+        "title": "Estetik tiklash",
+        "description": "Tishlarning shakli, rangi va tabiiy ko‘rinishini nozik tarzda tiklaydigan restavratsiyalar.",
+        "note": "Har bir tafsilotda aniqlik"
+      },
+      {
+        "title": "Tishlarni davolash",
+        "description": "Kariesni davolash va tishlarni tiklashga zamonaviy yondashuv, qulayligingizga e’tibor bilan.",
+        "note": "Ehtiyotkor va e’tiborli"
+      },
+      {
+        "title": "Ortodontiya",
+        "description": "Tishlashni tuzatishni rejalash va klinik holatingizga mos breket tizimini tanlash.",
+        "note": "Tabassumingiz uchun reja"
+      }
+    ]
+  },
+  "approach": {
+    "eyebrow": "Asosida — ishonch",
+    "title": "Faqat davolash emas.",
+    "titleAccent": "Sizga e’tibor.",
+    "description": "Variantlarni sodda tilda tushuntiraman, savollarga javob beraman va shoshilmasdan qaror qabul qilishga yordam beraman. Qulaylik ochiq suhbatdan boshlanadi.",
+    "steps": [
+      "Davolashdan oldin suhbat",
+      "Tushunarli reja",
+      "Tafsilotlarga e’tibor",
+      "Har bosqichda yordam"
+    ]
+  },
+  "contacts": {
+    "eyebrow": "Birinchi qadam oson",
+    "title": "Keling, tanishamiz",
+    "titleAccent": "va tabassum qilamiz.",
+    "description": "Aloqa ma’lumotlaringizni qoldiring va kerakli xizmatni tanlang. WhatsApp uchun yozilish xabarini tayyorlaymiz.",
+    "whatsapp": "WhatsApp orqali yozilish",
+    "whatsappNote": "Sizga qulay usulda yozing",
+    "instagram": "Instagram",
+    "instagramNote": "Ko‘proq ishlar va yangiliklar",
+    "findUs": "Bizni qanday topish mumkin",
+    "findTitle": "Sizni ko‘rishdan",
+    "findAccent": "xursand bo‘lamiz.",
+    "findDescription": "Maslahat uchun keling — tabassumingiz parvarishi uchun mos va ehtiyotkor rejani tanlaymiz.",
+    "addressLabel": "Klinika manzili",
+    "address": "Moskva, Barklay ko‘chasi, 8",
+    "addressFloor": "«Staraya Gorbusha» savdo markazi, 4-qavat",
+    "openMaps": "Manzilni Yandex Xaritalarda ochish",
+    "contactLabel": "Biz bilan bog‘lanish",
+    "phoneNote": "WhatsApp orqali yozilish va savollar",
+    "route": "Yo‘nalish tuzish",
+    "mapActivate": "Xaritani siljitish va kattalashtirish uchun bosing",
+    "mapActivateLabel": "Xaritani boshqarishni yoqish",
+    "mapInfo": "Klinika ma’lumotlarini ko‘rsatish",
+    "mapClose": "Klinika ma’lumotlarini yopish",
+    "mapOpen": "Xaritani ochish",
+    "mapTitle": "Dr. Mona Abdullaeva estetik stomatologiya klinikasi"
+  },
+  "form": {
+    "name": "Ismingiz",
+    "phone": "Telefon raqami",
+    "serviceLabel": "Sizni nima qiziqtiradi?",
+    "serviceOptions": [
+      "Bepul diagnostika",
+      "Estetik tiklash",
+      "Tishlarni davolash",
+      "Ortodontiya / breketlar",
+      "Boshqa xizmat"
+    ],
+    "consent": "Ariza bo‘yicha bog‘lanish uchun shaxsiy ma’lumotlarimni qayta ishlashga roziman va",
+    "privacy": "maxfiylik shartlari",
+    "submit": "Qabulga yozilish",
+    "submitted": "Xabar tayyorlandi",
+    "note": "Bosgandan so‘ng tayyor xabar bilan WhatsApp ochiladi. Ma’lumotlar ushbu sayt serveriga yuborilmaydi.",
+    "success": "Assalomu alaykum! Doktor Mona Abdullaeva qabuliga yozilmoqchiman."
+  },
+  "footer": {
+    "home": "Bosh sahifa",
+    "services": "Xizmatlar",
+    "cases": "Holatlar",
+    "approach": "Yondashuv",
+    "contacts": "Aloqa",
+    "copyright": "Barcha huquqlar himoyalangan.",
+    "medical": "Saytdagi ma’lumot tibbiy tavsiya emas va mutaxassis maslahatining o‘rnini bosmaydi. Davolash rejasi, ko‘rsatmalar, narx va muddatlar ko‘rikdan so‘ng belgilanadi. Portfeldagi rasmlar namuna sifatida berilgan."
+  },
+  "common": {
+    "oneVisit": "1 tashrif",
+    "individual": "Individual",
+    "oneVisitStar": "1 tashrif*",
+    "high": "Yuqori",
+    "complex": "Kompleks",
+    "afterExam": "Ko‘rikdan so‘ng",
+    "aesthetic": "ESTETIKA",
+    "orthodontics": "ORTODONTIYA",
+    "therapy": "TERAPIYA",
+    "service": "Xizmat",
+    "mapTitle": "Yandex interaktiv xaritasi — Dr. Mona Abdullaeva klinikasi, Moskva",
+    "homeAria": "Dr. Mona Abdullaeva — bosh sahifa",
+    "themeLight": "Yorug‘ mavzuni yoqish",
+    "themeDark": "Qorong‘i mavzuni yoqish",
+    "themeLightTitle": "Yorug‘ mavzu",
+    "themeDarkTitle": "Qorong‘i mavzu",
+    "privacyTitle": "Maxfiylik shartlari"
+  }
+}
